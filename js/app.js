@@ -6,11 +6,12 @@ async function loadApi () {
 		return response.json();
 	}).then(function (data) {
     data.results.forEach((company) => {
-    console.log(company);
-        L.marker([51.5, -0.09]).addTo(map)
+    company.matching_etablissements.forEach((etablissement)=>{
+        L.marker([etablissement.latitude, etablissement.longitude]).addTo(map)
             .bindPopup(company.nom_complet);
-    })
+    });
 	});
+});
 }
 loadApi();
 
