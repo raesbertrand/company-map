@@ -31,6 +31,7 @@ function feedMap(companies) {
             .addTo(map)
             .bindPopup(company.nom_complet)
             .on("click", function (e) {
+              container.textContent = ""
               createJsonViewer(company, container)
             })
         }
@@ -52,6 +53,8 @@ function createJsonViewer(json, container) {
     parent.appendChild(ul)
 
     Object.entries(obj).forEach(([key, value]) => {
+      if (value === false || value === null) return // Ne pas afficher les valeurs false et null
+
       const li = createElement("li", "json-node")
       const keySpan = createElement("span", "json-key", key + ": ")
       li.appendChild(keySpan)
