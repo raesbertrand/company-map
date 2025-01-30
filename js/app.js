@@ -1,4 +1,4 @@
-var response = await fetch('https://recherche-entreprises.api.gouv.fr/near_point?lat=47.468&long=-0.558');
+var response = await fetch('https://recherche-entreprises.api.gouv.fr/near_point?lat=47.450999&long=-0.555489&radius=1&per_page=25');
 var data = await response.json();
 var map = L.map('map').setView([47.468, -0.558], 13);
 
