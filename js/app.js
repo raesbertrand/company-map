@@ -1,5 +1,6 @@
 const api =
   "https://recherche-entreprises.api.gouv.fr/near_point?lat=47.450999&long=-0.555489&radius=0.5&per_page=25"
+var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.468, -0.558], 13)
 var page = 1
 var maxPage = 1000
@@ -27,7 +28,9 @@ function feedMap(companies) {
       collection.push(company)
       company.matching_etablissements.forEach((etablissement) => {
         if (etablissement.date_fermeture == null) {
+        markers.addLayer(
           L.marker([etablissement.latitude, etablissement.longitude])
+          )
             .addTo(map)
             .bindPopup(company.nom_complet)
             .on("click", function (e) {
