@@ -1,4 +1,8 @@
 <?php
+// require __DIR__ . '/vendor/autoload.php';
+
+use Curl\Curl;
+
 class CacheController extends BaseController
 {
 /**
@@ -38,4 +42,5 @@ class CacheController extends BaseController
             );
         }
     }
+
 }
