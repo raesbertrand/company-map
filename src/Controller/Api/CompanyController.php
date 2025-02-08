@@ -1,4 +1,6 @@
 <?php
+use Curl\Curl;
+
 class CompanyController extends BaseController
 {
     /**
@@ -10,6 +12,7 @@ class CompanyController extends BaseController
         $strErrorHeader=null;
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $arrQueryStringParams = $this->getQueryStringParams();
+
         if (strtoupper($requestMethod) == 'GET') {
             try {
                 $companyModel = new CompanyModel();
@@ -31,7 +34,10 @@ class CompanyController extends BaseController
         $this->companySendOutput($strErrorDesc, $responseData, $strErrorHeader);
     }
 
-    public function searchAction($lat, $long, $distance)
+    /**
+     * "/company/search" Endpoint - Search companies
+     */
+    public function searchAction()
     {
         /* SELECT 
         -- stuff here
@@ -40,20 +46,17 @@ class CompanyController extends BaseController
         stuff
         HAVING 
         distance < 500 */
-        $sql = 'SELECT 
-        * , ( 6371000 * acos( cos( radians(45.815005) ) * cos( radians( ' . $lat . ' ) ) * cos( radians( ' . $long . ' ) - radians(15.978501) ) + sin( radians(45.815005) ) * sin(radians(stuff.lat)) ) ) AS distance 
-        FROM 
-        company
-        HAVING 
-        distance < ' . $distance;
-
 
         $strErrorHeader=null;
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $arrQueryStringParams = $this->getQueryStringParams();
 
-        if (!isset($arrQueryStringParams['lat']) || !isset($arrQueryStringParams['long']) || !isset($arrQueryStringParams['distance'])) {
+        $lat=$arrQueryStringParams['lat'];
+        $long=$arrQueryStringParams['long']; 
+        $radius=$arrQueryStringParams['radius'];
+
+        if (!isset($lat) || !isset($long) || !isset($radius)) {
             $strErrorDesc = 'Missing params';
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
@@ -63,8 +66,31 @@ class CompanyController extends BaseController
             if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
                 $intLimit = $arrQueryStringParams['limit'];
             }
-            $arrCompanies = $companyModel->getCompanysAround($arrQueryStringParams['lat'],$arrQueryStringParams['long'],$arrQueryStringParams['distance']);
-            $responseData = json_encode($arrCompanies);
+            $arrCompanies = $companyModel->getCompanysAround($arrQueryStringParams['lat'],$arrQueryStringParams['long'],$arrQueryStringParams['radius']);
+            if(!empty($arrCompanies)){
+                $responseData = json_encode($arrCompanies);
+            }
+            else{
+                //cache is empty
+                $dataURI=$_ENV['COMPANY_API'].$_ENV['COMPANY_GEO_LOC_ENDPOINT'];
+                $dataParams=http_build_query($arrQueryStringParams);
+                try{
+                    $curl = new Curl();
+                    $curl->get($dataURI.'?'.$dataParams);
+                    $responseData=$curl->response;
+
+                }
+                catch(Error $e){
+                    $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
+                    $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+                }
+/*
+                if ($curl->error) {
+                    echo 'Error: ' . $curl->errorMessage . "\n";
+                    $curl->diagnose();
+                } else {
+                }*/
+            }
         } catch (Error $e) {
             $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
             $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
