@@ -7,6 +7,7 @@ class CompanyController extends BaseController
     public function listAction()
     {
         $strErrorDesc = '';
+        $strErrorHeader=null;
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $arrQueryStringParams = $this->getQueryStringParams();
         if (strtoupper($requestMethod) == 'GET') {
@@ -47,6 +48,7 @@ class CompanyController extends BaseController
         distance < ' . $distance;
 
 
+        $strErrorHeader=null;
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $arrQueryStringParams = $this->getQueryStringParams();
@@ -72,7 +74,7 @@ class CompanyController extends BaseController
         $this->companySendOutput($strErrorDesc, $responseData, $strErrorHeader);
     }
 
-    function companySendOutput($strErrorDesc, $responseData, $strErrorHeader)
+    function companySendOutput($strErrorDesc, $responseData, $strErrorHeader=null)
     {
         // send output
         if (!$strErrorDesc) {
