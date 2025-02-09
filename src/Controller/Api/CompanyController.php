@@ -9,7 +9,7 @@ class CompanyController extends BaseController
     public function listAction()
     {
         $strErrorDesc = '';
-        $strErrorHeader=null;
+        $strErrorHeader = null;
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $arrQueryStringParams = $this->getQueryStringParams();
 
@@ -47,14 +47,14 @@ class CompanyController extends BaseController
         HAVING 
         distance < 500 */
 
-        $strErrorHeader=null;
+        $strErrorHeader = null;
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $arrQueryStringParams = $this->getQueryStringParams();
 
-        $lat=$arrQueryStringParams['lat'];
-        $long=$arrQueryStringParams['long']; 
-        $radius=$arrQueryStringParams['radius'];
+        $lat = $arrQueryStringParams['lat'];
+        $long = $arrQueryStringParams['long'];
+        $radius = $arrQueryStringParams['radius'];
 
         if (!isset($lat) || !isset($long) || !isset($radius)) {
             $strErrorDesc = 'Missing params';
@@ -66,30 +66,24 @@ class CompanyController extends BaseController
             if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
                 $intLimit = $arrQueryStringParams['limit'];
             }
-            $arrCompanies = $companyModel->getCompanysAround($arrQueryStringParams['lat'],$arrQueryStringParams['long'],$arrQueryStringParams['radius']);
-            if(!empty($arrCompanies)){
+            $arrCompanies = $companyModel->getCompanysAround($arrQueryStringParams['lat'], $arrQueryStringParams['long'], $arrQueryStringParams['radius']);
+            if (!empty($arrCompanies)) {
                 $responseData = json_encode($arrCompanies);
-            }
-            else{
+            } else {
                 //cache is empty
-                $dataURI=$_ENV['COMPANY_API'].$_ENV['COMPANY_GEO_LOC_ENDPOINT'];
-                $dataParams=http_build_query($arrQueryStringParams);
-                try{
-                    $curl = new Curl();
-                    $curl->get($dataURI.'?'.$dataParams);
-                    $responseData=$curl->response;
+                $dataURI = $_ENV['COMPANY_API'] . $_ENV['COMPANY_GEO_LOC_ENDPOINT'];
+                $dataParams = http_build_query($arrQueryStringParams);
+                try {
+                    $curl = new Curl(null, [CURLOPT_SSL_VERIFYPEER => 0]);
 
-                }
-                catch(Error $e){
+                    $curl->get($dataURI . '?' . $dataParams);
+                    $this->insertCompaniesFromAPI($curl->response->results);
+                    $arrCompanies = $companyModel->getCompanysAround($arrQueryStringParams['lat'], $arrQueryStringParams['long'], $arrQueryStringParams['radius']);
+                    $responseData = json_encode($arrCompanies);
+                } catch (Error $e) {
                     $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
                     $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
                 }
-/*
-                if ($curl->error) {
-                    echo 'Error: ' . $curl->errorMessage . "\n";
-                    $curl->diagnose();
-                } else {
-                }*/
             }
         } catch (Error $e) {
             $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
@@ -100,7 +94,13 @@ class CompanyController extends BaseController
         $this->companySendOutput($strErrorDesc, $responseData, $strErrorHeader);
     }
 
-    function companySendOutput($strErrorDesc, $responseData, $strErrorHeader=null)
+    private function insertCompaniesFromAPI($collection)
+    {
+        //var_dump($collection);
+        return null;
+    }
+
+    private function companySendOutput($strErrorDesc, $responseData, $strErrorHeader = null)
     {
         // send output
         if (!$strErrorDesc) {
