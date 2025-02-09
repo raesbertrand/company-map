@@ -34,6 +34,7 @@ class CompanyController extends BaseController
         $this->companySendOutput($strErrorDesc, $responseData, $strErrorHeader);
     }
 
+
     /**
      * "/company/search" Endpoint - Search companies
      */
@@ -97,6 +98,7 @@ class CompanyController extends BaseController
     private function insertCompaniesFromAPI($collection)
     {
         //var_dump($collection);
+
         return null;
     }
 

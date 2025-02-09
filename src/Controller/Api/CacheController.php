@@ -43,4 +43,55 @@ class CacheController extends BaseController
         }
     }
 
+    
+    public function fromCacheAction(){
+        $strErrorHeader = null;
+        $strErrorDesc = '';
+        $requestMethod = $_SERVER["REQUEST_METHOD"];
+        $arrQueryStringParams = $this->getQueryStringParams();
+        $responseData=null;
+
+        $url=$arrQueryStringParams['url'];
+        if (!isset($url)) {
+            $strErrorDesc = 'Missing params';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+        if (strtoupper($requestMethod) == 'GET') {
+            try {
+                $cacheModel = new CacheModel();
+                $intLimit = 1;
+                if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
+                    $intLimit = $arrQueryStringParams['limit'];
+                }
+
+                $arrCache = $cacheModel->searchCaches('url='.$url,$intLimit);
+                $responseData = json_encode($arrCache);
+
+                /*if (!empty($arrCache)) {
+                    $responseData = json_encode($arrCache);
+                } else {
+                    //cache is empty
+                    try {
+                        $curl = new Curl(null, [CURLOPT_SSL_VERIFYPEER => 0]);    
+                        $curl->get($url);
+                        var_dump($curl);
+                        $insert=$cacheModel->insert('INSERT INTO api_cache VALUES (?,?,?)', [$url,$curl->response]);
+                        $responseData = json_encode($insert);
+                    } catch (Error $e) {
+                        $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
+                        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+                    }
+                }*/
+            } catch (Error $e) {
+                $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
+                $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+            }
+        } else {
+            $strErrorDesc = 'Method not supported';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+        // send output
+        $this->companySendOutput($strErrorDesc, $responseData, $strErrorHeader);
+    }
+
 }

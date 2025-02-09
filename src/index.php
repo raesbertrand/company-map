@@ -21,5 +21,6 @@ if ((isset($module) &&
 require PROJECT_ROOT_PATH . "/Controller/Api/CompanyController.php";
 require PROJECT_ROOT_PATH . "/Controller/Api/CacheController.php";
 $objFeedController = new CompanyController();
+$objFeedController = new CacheController();
 $strMethodName = $param . 'Action';
 $objFeedController->{$strMethodName}();
