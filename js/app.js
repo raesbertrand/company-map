@@ -28,15 +28,15 @@ function feedMap(companies) {
       collection.push(company)
       company.matching_etablissements.forEach((etablissement) => {
         if (etablissement.date_fermeture == null) {
-        markers.addLayer(
-          L.marker([etablissement.latitude, etablissement.longitude])
+          markers.addLayer(
+            L.marker([etablissement.latitude, etablissement.longitude])
+              .bindPopup(company.nom_complet)
+              .on("click", function (e) {
+                container.textContent = ""
+                createJsonViewer(company, container)
+              })
           )
             .addTo(map)
-            .bindPopup(company.nom_complet)
-            .on("click", function (e) {
-              container.textContent = ""
-              createJsonViewer(company, container)
-            })
         }
       })
     }
