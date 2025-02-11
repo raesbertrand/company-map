@@ -1,6 +1,4 @@
 <?php
-// require __DIR__ . '/vendor/autoload.php';
-
 use Curl\Curl;
 
 class CacheController extends BaseController
@@ -20,7 +18,7 @@ class CacheController extends BaseController
                 if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
                     $intLimit = $arrQueryStringParams['limit'];
                 }
-                $arrCompanies = $cacheModel->getCompanies($intLimit);
+                $arrCompanies = $cacheModel->getCaches($intLimit);
                 $responseData = json_encode($arrCompanies);
             } catch (Error $e) {
                 $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
@@ -83,15 +81,16 @@ class CacheController extends BaseController
                     }
                 }*/
             } catch (Error $e) {
-                $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
+                $strErrorDesc = $e->getMessage() . ' Something went wrong! Please contact support.';
                 $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
             }
         } else {
             $strErrorDesc = 'Method not supported';
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
+       // var_dump($strErrorDesc);
         // send output
-        $this->companySendOutput($strErrorDesc, $responseData, $strErrorHeader);
+        $this->sendOutputManager($strErrorDesc, $responseData, $strErrorHeader);
     }
 
 }

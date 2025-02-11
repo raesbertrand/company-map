@@ -12,7 +12,6 @@ class CompanyController extends BaseController
         $strErrorHeader = null;
         $requestMethod = $_SERVER["REQUEST_METHOD"];
         $arrQueryStringParams = $this->getQueryStringParams();
-
         if (strtoupper($requestMethod) == 'GET') {
             try {
                 $companyModel = new CompanyModel();
@@ -31,7 +30,7 @@ class CompanyController extends BaseController
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
         // send output
-        $this->companySendOutput($strErrorDesc, $responseData, $strErrorHeader);
+        $this->sendOutputManager($strErrorDesc, $responseData, $strErrorHeader);
     }
 
 
@@ -90,9 +89,8 @@ class CompanyController extends BaseController
             $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
             $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
         }
-
         // send output
-        $this->companySendOutput($strErrorDesc, $responseData, $strErrorHeader);
+        $this->sendOutputManager($strErrorDesc, $responseData, $strErrorHeader);
     }
 
     private function insertCompaniesFromAPI($collection)
@@ -100,21 +98,5 @@ class CompanyController extends BaseController
         //var_dump($collection);
 
         return null;
-    }
-
-    private function companySendOutput($strErrorDesc, $responseData, $strErrorHeader = null)
-    {
-        // send output
-        if (!$strErrorDesc) {
-            $this->sendOutput(
-                $responseData,
-                array('Content-Type: application/json', 'HTTP/1.1 200 OK')
-            );
-        } else {
-            $this->sendOutput(
-                json_encode(array('error' => $strErrorDesc)),
-                array('Content-Type: application/json', $strErrorHeader)
-            );
-        }
     }
 }
