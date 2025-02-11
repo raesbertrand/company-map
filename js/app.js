@@ -9,6 +9,11 @@ const container = document.getElementById("json-container")
 
 const selectedCompany = new Company();
 
+document.addEventListener("companyDataUpdated", (event) => {
+  container.textContent = "";
+  createJsonViewer(event.detail, container);
+});
+
 async function loadApi(url) {
   await fetch(url)
     .then(function (response) {

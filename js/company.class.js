@@ -1,19 +1,28 @@
 class Company {
     constructor() {
         this.data = {};
+
         return new Proxy(this, {
             set(target, prop, value) {
                 console.log(`Mise à jour de ${prop}:`, value);
                 target.data[prop] = value;
+
+                // Émettre un événement personnalisé avec les nouvelles données
+                document.dispatchEvent(new CustomEvent("companyDataUpdated", {
+                    detail: target.data
+                }));
+
                 return true;
             }
         });
     }
-  
+
     update(nouvellesDonnees) {
         Object.assign(this.data, nouvellesDonnees);
-        container.textContent = ""
-        createJsonViewer(this.data, container)
-        // console.log("Mise à jour complète des données", this.data);
+
+        // Émettre un événement personnalisé après mise à jour complète
+        document.dispatchEvent(new CustomEvent("companyDataUpdated", {
+            detail: this.data
+        }));
     }
-  }
+}
