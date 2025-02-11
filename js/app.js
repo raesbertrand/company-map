@@ -39,10 +39,6 @@ function feedMap(companies) {
             L.marker([etablissement.latitude, etablissement.longitude])
               .bindPopup(company.nom_complet)
               .on("click", function (e) {
-                /* container.textContent = ""
-                createJsonViewer(company, container) */
-                console.log(JSON.stringify(company));
-                //selectedCompany=company
                 selectedCompany.update(company)
               })
           )

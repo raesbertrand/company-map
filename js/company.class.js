@@ -4,7 +4,6 @@ class Company {
 
         return new Proxy(this, {
             set(target, prop, value) {
-                console.log(`Mise à jour de ${prop}:`, value);
                 target.data[prop] = value;
 
                 // Émettre un événement personnalisé avec les nouvelles données
