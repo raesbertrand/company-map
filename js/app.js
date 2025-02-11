@@ -7,6 +7,8 @@ var maxPage = 1000
 var collection = []
 const container = document.getElementById("json-container")
 
+const selectedCompany = new Company();
+
 async function loadApi(url) {
   await fetch(url)
     .then(function (response) {
@@ -32,8 +34,11 @@ function feedMap(companies) {
             L.marker([etablissement.latitude, etablissement.longitude])
               .bindPopup(company.nom_complet)
               .on("click", function (e) {
-                container.textContent = ""
-                createJsonViewer(company, container)
+                /* container.textContent = ""
+                createJsonViewer(company, container) */
+                console.log(JSON.stringify(company));
+                //selectedCompany=company
+                selectedCompany.update(company)
               })
           )
             .addTo(map)
@@ -84,6 +89,7 @@ function createJsonViewer(json, container) {
 
   createTree(json, container)
 }
+
 
 loadApi(api + "&page=" + page)
 
