@@ -30,7 +30,7 @@ class Database
     {
         try {
             $stmt = $this->executeStatement($query, $params);
-            $result = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+            $result=$stmt->insert_id;
             $stmt->close();
             return $result;
         } catch (Exception $e) {

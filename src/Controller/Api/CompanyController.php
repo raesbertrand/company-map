@@ -30,7 +30,7 @@ class CompanyController extends BaseController
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
         // send output
-        $this->sendOutputManager($strErrorDesc, $responseData, $strErrorHeader);
+        $this->sendOutputManager($responseData, $strErrorDesc, $strErrorHeader);
     }
 
 
@@ -90,7 +90,7 @@ class CompanyController extends BaseController
             $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
         }
         // send output
-        $this->sendOutputManager($strErrorDesc, $responseData, $strErrorHeader);
+        $this->sendOutputManager($responseData, $strErrorDesc, $strErrorHeader);
     }
 
     private function insertCompaniesFromAPI($collection)

@@ -48,7 +48,7 @@ class BaseController
         echo $data;
         exit;
     }
-    protected function sendOutputManager($strErrorDesc, $responseData, $strErrorHeader = null)
+    protected function sendOutputManager($responseData, $strErrorDesc, $strErrorHeader = null)
     {
         // send output
         if (!$strErrorDesc) {

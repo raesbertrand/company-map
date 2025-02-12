@@ -3,6 +3,11 @@ use Curl\Curl;
 
 class CacheController extends BaseController
 {
+    protected $cacheModel = null;
+    public function __construct(){
+        
+        $this->cacheModel = new CacheModel();
+    }
 /**
 * "/cache/list" Endpoint - Get list of cached calls
 */
@@ -13,12 +18,11 @@ class CacheController extends BaseController
         $arrQueryStringParams = $this->getQueryStringParams();
         if (strtoupper($requestMethod) == 'GET') {
             try {
-                $cacheModel = new CacheModel();
                 $intLimit = 10;
                 if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
                     $intLimit = $arrQueryStringParams['limit'];
                 }
-                $arrCompanies = $cacheModel->getCaches($intLimit);
+                $arrCompanies = $this->cacheModel->getCaches($intLimit);
                 $responseData = json_encode($arrCompanies);
             } catch (Error $e) {
                 $strErrorDesc = $e->getMessage().'Something went wrong! Please contact support.';
@@ -46,40 +50,37 @@ class CacheController extends BaseController
         $strErrorHeader = null;
         $strErrorDesc = '';
         $requestMethod = $_SERVER["REQUEST_METHOD"];
-        $arrQueryStringParams = $this->getQueryStringParams();
-        $responseData=null;
 
-        $url=$arrQueryStringParams['url'];
+        $arrQueryStringParams = $this->getQueryStringParams();
+
+        $arrBodyString=file_get_contents('php://input');
+        $arrBodyJson=json_decode($arrBodyString,TRUE);
+
+        $responseData=null;
+        
+        $url=$arrBodyJson['url'];
+
         if (!isset($url)) {
             $strErrorDesc = 'Missing params';
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
         if (strtoupper($requestMethod) == 'GET') {
             try {
-                $cacheModel = new CacheModel();
                 $intLimit = 1;
                 if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
                     $intLimit = $arrQueryStringParams['limit'];
                 }
 
-                $arrCache = $cacheModel->searchCaches('url='.$url,$intLimit);
-                $responseData = json_encode($arrCache);
+                $arrCache = $this->cacheModel->searchCaches($url,$intLimit);
 
-                /*if (!empty($arrCache)) {
-                    $responseData = json_encode($arrCache);
+                if (!empty($arrCache)) {
+                    $responseData = $arrCache[0]['result'];
                 } else {
                     //cache is empty
-                    try {
-                        $curl = new Curl(null, [CURLOPT_SSL_VERIFYPEER => 0]);    
-                        $curl->get($url);
-                        var_dump($curl);
-                        $insert=$cacheModel->insert('INSERT INTO api_cache VALUES (?,?,?)', [$url,$curl->response]);
-                        $responseData = json_encode($insert);
-                    } catch (Error $e) {
-                        $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
-                        $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
-                    }
-                }*/
+                   $datas=$this->getDatas($url);
+                   $this->cacheModel->insertCache($url,$datas);
+                   $responseData=$datas;
+                }
             } catch (Error $e) {
                 $strErrorDesc = $e->getMessage() . ' Something went wrong! Please contact support.';
                 $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
@@ -88,9 +89,26 @@ class CacheController extends BaseController
             $strErrorDesc = 'Method not supported';
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
-       // var_dump($strErrorDesc);
-        // send output
-        $this->sendOutputManager($strErrorDesc, $responseData, $strErrorHeader);
+        
+        $this->sendOutputManager( $responseData, $strErrorDesc, $strErrorHeader);
+    }
+
+    private function getDatas($url,$params=null,$headers=null){
+        try {
+            $verifypeer=1;
+            if($_ENV['MODE']=='dev'){
+                $verifypeer= 0;
+            }
+            
+            $curl = new Curl(null, [CURLOPT_SSL_VERIFYPEER => $verifypeer]);
+
+            $curl->get($url);
+            return json_encode($curl->response);
+        } catch (Error $e) {
+            $strErrorDesc = $e->getMessage() . '[CURL] Something went wrong! Please contact support.';
+            $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+            $this->sendOutputManager(null, $strErrorDesc,  $strErrorHeader);
+        }
     }
 
 }
