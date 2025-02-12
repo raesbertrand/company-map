@@ -74,8 +74,12 @@ class CompanyController extends BaseController
                 $dataURI = $_ENV['COMPANY_API'] . $_ENV['COMPANY_GEO_LOC_ENDPOINT'];
                 $dataParams = http_build_query($arrQueryStringParams);
                 try {
-                    $curl = new Curl(null, [CURLOPT_SSL_VERIFYPEER => 0]);
-
+                    $verifypeer=1;
+                    if($_ENV['MODE']=='dev'){
+                        $verifypeer= 0;
+                    }
+                    
+                    $curl = new Curl(null, [CURLOPT_SSL_VERIFYPEER => $verifypeer]);
                     $curl->get($dataURI . '?' . $dataParams);
                     $this->insertCompaniesFromAPI($curl->response->results);
                     $arrCompanies = $companyModel->getCompanysAround($arrQueryStringParams['lat'], $arrQueryStringParams['long'], $arrQueryStringParams['radius']);
