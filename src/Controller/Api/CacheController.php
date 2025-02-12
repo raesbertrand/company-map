@@ -72,11 +72,11 @@ class CacheController extends BaseController
                 }
 
                 $arrCache = $this->cacheModel->searchCaches($url,$intLimit);
-
                 if (!empty($arrCache)) {
                     $responseData = $arrCache[0]['result'];
                 } else {
-                    //cache is empty
+                    //cache is empty or two old
+                    $this->cacheModel->cleanSourceCache($url); 
                    $datas=$this->getDatas($url);
                    $this->cacheModel->insertCache($url,$datas);
                    $responseData=$datas;
