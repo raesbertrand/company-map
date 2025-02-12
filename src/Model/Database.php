@@ -72,8 +72,7 @@ class Database
                 throw new Exception("Unable to do prepared statement: " . $query);
             }
             if ($params) {
-                var_dump($params);
-                $stmt->bind_param($params[0], $params[1]);
+                $stmt->bind_param($params[0], ...$params[1]);
             }
             $stmt->execute();
             return $stmt;

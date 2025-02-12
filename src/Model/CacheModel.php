@@ -9,7 +9,7 @@ class CacheModel extends Database
 
     public function searchCaches($where, $limit)
     {
-        return $this->select("SELECT * FROM api_cache WHERE ? ORDER BY cached_at ASC LIMIT ?", ["ss", $where, $limit]);
+        return $this->select("SELECT * FROM api_cache WHERE ? ORDER BY cached_at ASC LIMIT ?", ["si", [$where, $limit]]);
     }
 
     public function pingCache($where)
