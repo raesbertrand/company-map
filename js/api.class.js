@@ -1,20 +1,17 @@
 class Api {
-    constructor() {
+    constructor(endPt, evt) {
+        this.eventName = (evt) ? evt : "apiResponse";
         this.data = {};
-        this.endpointUrl=null;
-        this.parameters = {
-            headers: { "content-type": "application/json; charset=UTF-8" },
-            body: {},
-            method: "GET",
-            mode: "cors"
-        };
+        this.endpointUrl = endPt;
+        this.parameters = null;
+        this.page=1
 
         return new Proxy(this, {
             set(target, prop, value) {
                 target.data[prop] = value;
 
                 // Émettre un événement personnalisé avec les nouvelles données
-                document.dispatchEvent(new CustomEvent("apiResponse", {
+                document.dispatchEvent(new CustomEvent(this.eventName, {
                     detail: target.data
                 }));
 
@@ -23,42 +20,55 @@ class Api {
         });
     }
 
-    get(endpt, params, callback) {
-        let p = { ...this.parameters }
-        Object.assign(this.parameters, p, params);
-        this.parameters.method = "GET";
-
-        this.endpointUrl=endpt;
+    get(callback) {
+        //TODO : add get var manager
+        // this.endpointurl must be the url without url params
+        this.parameters = null;
         this.call(callback)
     }
 
-    post(endpoint, params, callback) {
-        let p = { ...this.parameters }
+    post(params, callback) {
+        let p = {
+            headers: { "content-type": "application/json; charset=UTF-8" },
+            body: {},
+            method: "POST",
+            mode: "cors"
+        };
         this.parameters = Object.assign({}, p, params);
 
-        this.parameters.method = "POST";
-        this.endpointUrl=endpoint;
         this.call(callback)
     }
 
     call(callback) {
-        console.log(this.endpointUrl)
-        let obj=this;
+        this.page++;
+        var obj = this;
+        console.log(this.page)
         fetch(this.endpointUrl, this.parameters)
             .then(function (response) {
                 if (response.ok) {
-                    console.log(response)
-                    if(callback){
-                        callback();
-                    }
-                    Object.assign(obj.data, response.json())
+                    return response.json()
                 } else {
                     throw new Error("Could not reach the API: " + response.statusText);
                 }
-            }).then(function (d) {
-                console.log(d.encoded);
-            }).catch(function (error) {
+            })
+            .then(function (d) {
+                if (callback) {
+                    callback();
+                }
+                
+                Object.assign(obj.data, d)
+                // Émettre un événement personnalisé après mise à jour complète
+                document.dispatchEvent(new CustomEvent(obj.eventName, {
+                    detail: obj.data
+                }));
+
+            })
+            .catch(function (error) {
                 Object.assign(obj.data, error.message)
             });
+    }
+
+    nextPage(){
+        //TODO : manage pagination
     }
 }

@@ -8,12 +8,18 @@ var collection = []
 const container = document.getElementById("json-container")
 
 const selectedCompany = new Company();
-const companyApi= new Api();
-companyApi.get(endpoint,{"test":"ok"},null)
-
 document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = "";
   createJsonViewer(event.detail, container);
+});
+
+const companyApi = new Api(endpoint, "datagouvEntreprises");
+companyApi.get()
+
+document.addEventListener("datagouvEntreprises", (event) => {
+  let apiResult = event.detail
+  feedMap(apiResult.results)
+  // call next page
 });
 
 // async function loadApi(url) {
