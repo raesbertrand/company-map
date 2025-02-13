@@ -1,5 +1,5 @@
-const endpoint =
-  "https://recherche-entreprises.api.gouv.fr/near_point?lat=47.450999&long=-0.555489&radius=0.5&per_page=25"
+const endpoint = "https://recherche-entreprises.api.gouv.fr/near_point?"
+var endpointParam={"lat":"47.450999", "long":"-0.555489", "radius":"0.5","per_page":"25"}
 var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.468, -0.558], 13)
 var page = 1
@@ -9,33 +9,17 @@ const container = document.getElementById("json-container")
 
 const selectedCompany = new Company();
 document.addEventListener("companyDataUpdated", (event) => {
-  container.textContent = "";
-  createJsonViewer(event.detail, container);
-});
+  container.textContent = ""
+  createJsonViewer(event.detail, container)
+})
 
-const companyApi = new Api(endpoint, "datagouvEntreprises");
-companyApi.get()
+const companyApi = new Api(endpoint, "datagouvEntreprises")
+companyApi.get(endpointParam,null,true)
 
 document.addEventListener("datagouvEntreprises", (event) => {
   let apiResult = event.detail
   feedMap(apiResult.results)
-  // call next page
-});
-
-// async function loadApi(url) {
-//   await fetch(url)
-//     .then(function (response) {
-//       return response.json()
-//     })
-//     .then(function (data) {
-//       page++
-//       maxPage = data.total_pages
-//       if (page <= maxPage) {
-//         loadApi(api + "&page=" + page)
-//       }
-//       feedMap(data.results)
-//     })
-// }
+})
 
 function feedMap(companies) {
   companies.forEach((company) => {
@@ -98,9 +82,6 @@ function createJsonViewer(json, container) {
 
   createTree(json, container)
 }
-
-
-// loadApi(api + "&page=" + page)
 
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {

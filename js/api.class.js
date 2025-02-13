@@ -1,10 +1,11 @@
 class Api {
+
     constructor(endPt, evt) {
         this.eventName = (evt) ? evt : "apiResponse";
         this.data = {};
         this.endpointUrl = endPt;
         this.parameters = null;
-        this.page=1
+        this.page = 1
 
         return new Proxy(this, {
             set(target, prop, value) {
@@ -20,11 +21,12 @@ class Api {
         });
     }
 
-    get(callback) {
-        //TODO : add get var manager
-        // this.endpointurl must be the url without url params
-        this.parameters = null;
-        this.call(callback)
+    get(vars, callback, all) {
+        let urlVars=vars;
+        if(typeof(vars)!="string"){
+            urlVars=this.objToParams(vars)
+        }
+        this.call(this.endpointUrl += urlVars, callback, all)
     }
 
     post(params, callback) {
@@ -39,14 +41,16 @@ class Api {
         this.call(callback)
     }
 
-    call(callback) {
+    call(uri, callback, all) {
         this.page++;
         var obj = this;
-        console.log(this.page)
-        fetch(this.endpointUrl, this.parameters)
+        var urlCache
+
+        fetch(uri, this.parameters)
             .then(function (response) {
                 if (response.ok) {
-                    return response.json()
+                    urlCache = response.url;
+                    return response.json();
                 } else {
                     throw new Error("Could not reach the API: " + response.statusText);
                 }
@@ -57,10 +61,19 @@ class Api {
                 }
                 
                 Object.assign(obj.data, d)
+
                 // Émettre un événement personnalisé après mise à jour complète
                 document.dispatchEvent(new CustomEvent(obj.eventName, {
                     detail: obj.data
                 }));
+
+                if (all && d.page < d.total_pages) {
+                    let urlparams=urlCache.split('?')
+                    let p = new URLSearchParams(urlparams[1]);
+                    p.set("page",d.page+=1)
+
+                    obj.get(p.toString(), callback,all)
+                }
 
             })
             .catch(function (error) {
@@ -68,7 +81,15 @@ class Api {
             });
     }
 
-    nextPage(){
-        //TODO : manage pagination
+    objToParams(object) {
+        var out = [];
+
+        for (var key in object) {
+            if (object.hasOwnProperty(key)) {
+                out.push(key + '=' + encodeURIComponent(object[key]));
+            }
+        }
+
+        return out.join('&');
     }
 }
