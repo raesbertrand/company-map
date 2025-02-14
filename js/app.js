@@ -1,10 +1,7 @@
-const endpoint = "https://recherche-entreprises.api.gouv.fr/near_point?"
-var endpointParam={"lat":"47.450999", "long":"-0.555489", "radius":"0.5","per_page":"25"}
+var endpointParam=env.defaultEndpointParams
 var markers = L.markerClusterGroup();
-var map = L.map("map").setView([47.468, -0.558], 13)
-var page = 1
-var maxPage = 1000
-var collection = []
+var map = L.map("map").setView([47.450999, -0.555489], 16)
+var collection = {}
 const container = document.getElementById("json-container")
 
 const selectedCompany = new Company();
@@ -13,7 +10,7 @@ document.addEventListener("companyDataUpdated", (event) => {
   createJsonViewer(event.detail, container)
 })
 
-const companyApi = new Api(endpoint, "datagouvEntreprises")
+const companyApi = new Api(env.endpoint, "datagouvEntreprises")
 companyApi.get(endpointParam,null,true)
 
 document.addEventListener("datagouvEntreprises", (event) => {
@@ -24,9 +21,9 @@ document.addEventListener("datagouvEntreprises", (event) => {
 function feedMap(companies) {
   companies.forEach((company) => {
     if (company.date_fermeture == null) {
-      collection.push(company)
       company.matching_etablissements.forEach((etablissement) => {
-        if (etablissement.date_fermeture == null) {
+        if (etablissement.date_fermeture == null && !collection[etablissement.siret]) {
+          collection[etablissement.siret]=company;
           markers.addLayer(
             L.marker([etablissement.latitude, etablissement.longitude])
               .bindPopup(company.nom_complet)
@@ -88,3 +85,10 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map)
+
+map.on('zoomend, moveend', function(e) {
+  var centre = map.getCenter();
+  endpointParam.lat=centre.lat 
+  endpointParam.long=centre.lng
+  companyApi.get(endpointParam,null,true)
+});
