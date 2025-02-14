@@ -1,9 +1,6 @@
-const endpoint = "https://recherche-entreprises.api.gouv.fr/near_point?"
-var endpointParam={"lat":"47.450999", "long":"-0.555489", "radius":"0.5","per_page":"25"}
+var endpointParam=env.defaultEndpointParams
 var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.468, -0.558], 13)
-var page = 1
-var maxPage = 1000
 var collection = []
 const container = document.getElementById("json-container")
 
@@ -13,7 +10,7 @@ document.addEventListener("companyDataUpdated", (event) => {
   createJsonViewer(event.detail, container)
 })
 
-const companyApi = new Api(endpoint, "datagouvEntreprises")
+const companyApi = new Api(env.endpoint, "datagouvEntreprises")
 companyApi.get(endpointParam,null,true)
 
 document.addEventListener("datagouvEntreprises", (event) => {
