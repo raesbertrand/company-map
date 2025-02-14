@@ -8,6 +8,7 @@ const selectedCompany = new Company();
 document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = ""
   createJsonViewer(event.detail, container)
+  displayCompanyCard(event.detail)
 })
 
 const companyApi = new Api(env.endpoint, "datagouvEntreprises")
@@ -78,6 +79,17 @@ function createJsonViewer(json, container) {
   }
 
   createTree(json, container)
+}
+
+function displayCompanyCard(comp){
+  var target=document.querySelector("#company-card")
+  target.textContent = ""
+  var template = document.querySelector("#company-card-template");
+  var clone = document.importNode(template.content, true);
+
+  clone.querySelectorAll('.name')[0].textContent=comp.nom_complet
+
+  target.appendChild(clone);
 }
 
 
