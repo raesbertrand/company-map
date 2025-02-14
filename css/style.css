@@ -1,1 +1,22 @@
 #map { height: 580px; }
+
+/* #left-column{
+    width:30%;
+    min-height: 30px;
+    min-width:30px;
+}
+#right-column{
+    min-height: 30px;
+    min-width:30px;
+    width:70%;
+} */
+
+.grid{
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+}
+
+/* .flex-row {
+    display: flex;
+    justify-content: space-between;
+} */
