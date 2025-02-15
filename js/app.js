@@ -29,7 +29,7 @@ function feedMap(companies) {
             L.marker([etablissement.latitude, etablissement.longitude])
               .bindPopup(company.nom_complet)
               .on("click", function (e) {
-                selectedCompany.update(company)
+                selectedCompany.update({"siret":etablissement.siret, "company":company})
               })
           )
             .addTo(map)
@@ -81,15 +81,26 @@ function createJsonViewer(json, container) {
   createTree(json, container)
 }
 
-function displayCompanyCard(comp){
+function displayCompanyCard(markerDatas){
   var target=document.querySelector("#company-card")
+  var siret=markerDatas['siret'];
+  var companyDetails=markerDatas['company']
   target.textContent = ""
   var template = document.querySelector("#company-card-template");
   var clone = document.importNode(template.content, true);
+console.log(companyDetails)
+  Object.entries(companyDetails).forEach((company,e) => {
+    console.log(company, typeof(company[1]))
+    // clone.querySelectorAll('.name')
+  });
+  // clone.querySelectorAll('.name')[0].textContent=comp.nom_complet
 
-  clone.querySelectorAll('.name')[0].textContent=comp.nom_complet
 
   target.appendChild(clone);
+}
+
+function insertVarTemplate(datas, model){
+
 }
 
 

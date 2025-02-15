@@ -1,6 +1,45 @@
-#map { height: 580px; }
+:root {
+    --lighter-grey-color: #ececec;
+    --green-color: #9fd3c7;
+    --blue-color: #385170;
+    --dark-color: #142d4c;
+}
 
-.grid{
+html {
+    font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+    color:var(--dark-color)
+}
+body{
+    padding: 0;
+    margin:0
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color:var(--blue-color);
+    font-weight: bold;
+}
+
+#map {
+    height: 580px;
+}
+
+.grid {
     display: grid;
     grid-template-columns: 1fr 3fr;
+}
+#company-card .title {
+    background: var(--lighter-grey-color);
+    border-bottom: 1px solid var(--green-color)
+}
+
+#company-card .title .icon, 
+#company-card .title .name{
+    display: inline;
+    color:var(--blue-color);
+
 }
