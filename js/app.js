@@ -1,4 +1,4 @@
-var endpointParam=env.defaultEndpointParams
+var endpointParam = env.defaultEndpointParams
 var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
 var collection = {}
@@ -12,7 +12,7 @@ document.addEventListener("companyDataUpdated", (event) => {
 })
 
 const companyApi = new Api(env.endpoint, "datagouvEntreprises")
-companyApi.get(endpointParam,null,true)
+companyApi.get(endpointParam, null, true)
 
 document.addEventListener("datagouvEntreprises", (event) => {
   let apiResult = event.detail
@@ -24,12 +24,12 @@ function feedMap(companies) {
     if (company.date_fermeture == null) {
       company.matching_etablissements.forEach((etablissement) => {
         if (etablissement.date_fermeture == null && !collection[etablissement.siret]) {
-          collection[etablissement.siret]=company;
+          collection[etablissement.siret] = company;
           markers.addLayer(
             L.marker([etablissement.latitude, etablissement.longitude])
               .bindPopup(company.nom_complet)
               .on("click", function (e) {
-                selectedCompany.update({"siret":etablissement.siret, "company":company})
+                selectedCompany.update({ "siret": etablissement.siret, "company": company })
               })
           )
             .addTo(map)
@@ -81,26 +81,48 @@ function createJsonViewer(json, container) {
   createTree(json, container)
 }
 
-function displayCompanyCard(markerDatas){
-  var target=document.querySelector("#company-card")
-  var siret=markerDatas['siret'];
-  var companyDetails=markerDatas['company']
+function displayCompanyCard(markerDatas) {
+  var target = document.querySelector("#company-card")
+  var siret = markerDatas['siret'];
+  var companyDetails = markerDatas['company']
   target.textContent = ""
   var template = document.querySelector("#company-card-template");
   var clone = document.importNode(template.content, true);
-console.log(companyDetails)
-  Object.entries(companyDetails).forEach((company,e) => {
-    console.log(company, typeof(company[1]))
-    // clone.querySelectorAll('.name')
-  });
-  // clone.querySelectorAll('.name')[0].textContent=comp.nom_complet
-
+  insertVarTemplate(companyDetails, clone)
 
   target.appendChild(clone);
 }
 
-function insertVarTemplate(datas, model){
+function capitalizeFirstLetter(str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}
 
+function insertVarTemplate(datas, model, parent) {
+  Object.entries(datas).forEach((data) => {
+
+    let key = ''
+    if (!parent) {
+      key = data[0]
+    }
+    else {
+      key = parent + "-" + data[0]
+    }
+    let value = data[1];
+
+    if (typeof (value) == "object") {
+      //loop on subobject
+    }
+    else {
+      let label = capitalizeFirstLetter(data[0].replace('_', ' '))
+      let node = model.querySelectorAll('.' + key)
+      if (node.length > 0) {
+        node.forEach(function (v, k) {
+          v.textContent = value
+        })
+      }
+
+    }
+  });
 }
 
 
@@ -109,9 +131,9 @@ L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map)
 
-map.on('zoomend, moveend', function(e) {
+map.on('zoomend, moveend', function (e) {
   var centre = map.getCenter();
-  endpointParam.lat=centre.lat 
-  endpointParam.long=centre.lng
-  companyApi.get(endpointParam,null,true)
+  endpointParam.lat = centre.lat
+  endpointParam.long = centre.lng
+  companyApi.get(endpointParam, null, true)
 });
