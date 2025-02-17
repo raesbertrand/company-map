@@ -109,8 +109,13 @@ function insertVarTemplate(datas, model, parent) {
     }
     let value = data[1];
 
-    if (typeof (value) == "object") {
+    if (typeof (value) == "object" && value!=null) {
       //loop on subobject
+      if(value[0]){
+        value.forEach(function(d,i){
+          insertVarTemplate(d, model, key)
+        })
+      }
     }
     else {
       let label = capitalizeFirstLetter(data[0].replace('_', ' '))
