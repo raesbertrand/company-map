@@ -88,7 +88,7 @@ function displayCompanyCard(markerDatas) {
   target.textContent = ""
   var template = document.querySelector("#company-card-template");
   var clone = document.importNode(template.content, true);
-  insertVarTemplate(companyDetails, clone)
+  insertVarTemplate(["siret",siret],companyDetails, clone)
 
   target.appendChild(clone);
 }
@@ -97,9 +97,10 @@ function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
-function insertVarTemplate(datas, model, parent) {
+function insertVarTemplate(unicId, datas, model, parent, specific) {
+  // unicId must be an array. Index 0 define the key of an object, index 1 define a value. If a node contains this key with a different value, the node is ignore. 
+  // The goal is to ignore unrelevant buildings of the company as the user click on a single building but the data list all of them.
   Object.entries(datas).forEach((data) => {
-
     let key = ''
     if (!parent) {
       key = data[0]
@@ -108,23 +109,35 @@ function insertVarTemplate(datas, model, parent) {
       key = parent + "-" + data[0]
     }
     let value = data[1];
+    console.log(data[unicId[0]] && data[0]!=unicId[0] && data[unicId[0]]!=unicId[1])
+
+    if(data[unicId[0]] && data[0]!=unicId[0] && data[unicId[0]]!=unicId[1]){
+      return
+    }
 
     if (typeof (value) == "object" && value!=null) {
-      //loop on subobject
       if(value[0]){
         value.forEach(function(d,i){
-          insertVarTemplate(d, model, key)
+          insertVarTemplate(unicId, d, model, key)
         })
       }
     }
     else {
       let label = capitalizeFirstLetter(data[0].replace('_', ' '))
       let node = model.querySelectorAll('.' + key)
+      let labelNode=model.querySelectorAll('.' + key+'--label')
       if (node.length > 0) {
         node.forEach(function (v, k) {
           v.textContent = value
         })
       }
+
+      if (labelNode.length > 0) {
+        node.forEach(function (v, k) {
+          v.textContent = label
+        })
+      }
+      
 
     }
   });

@@ -50,31 +50,36 @@
     </div>
     <div class="card">
       <ul class="administrative">
-        <li><i class="fa-solid fa-box-archive"></i> Siret : <span class="siret">!!Siret</span></li>
+        <li><i class="fa-solid fa-box-archive"></i> Siret : <span class="matching_etablissements-siret">!!Siret</span></li>
         <li><i class="fa-solid fa-user-tie"></i>Dirigeant : <span class="dirigeants">!!Dirigeant</span></li>
         <li>Catégorie : <span class="categorie_entreprise">!!category</span></li>
       </ul>
       <div class="address">
         <h2>Adresse</h2>
         <i class="fa-solid fa-location-dot"></i>
-        <div class="full_adress">!!full address</div>
+        <div class="matching_etablissements-adresse">!!full address</div>
       </div>
       <div id="details">
         <h2>Détails</h2>
         <ul>
-          <li>Créé le <span class="matching_etablissements-n-date_creation">!!date création</span></li>
-          <li>Effectif : <span class="matching_etablissements-n-tranche_effectif_salarie">!!Effectif</span></li>
-          <li>Siège de l'entreprise : <span clss="matching_etablissements-n-est_siege">!!Siege</span></li>
+          <li>Créé le <span class="matching_etablissements-date_creation">!!date création</span></li>
+          <li>Effectif : <span class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span></li>
+          <li>Siège de l'entreprise : <span class="matching_etablissements-est_siege">!!Siege</span></li>
         </ul>
       </div>
       <div class="entreprise">
         <h2>Entreprise</h2>
+        <ul>
+          <li>Activité principale <span class="activite_principale">!!activité principale</span></li>
+        </ul>
       </div>
     </div>
   </template>
+
   <template id="list-template">
     <li class="item standard"><span class="label">!!label</span> : <span class="value">!!value</span></span></li>
   </template>
+
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
   <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
