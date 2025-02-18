@@ -24,6 +24,18 @@ h6 {
     font-weight: bold;
 }
 
+h1{
+    font-size: 1.5em;
+}
+
+h2{
+    font-size: 1.4em;
+}
+
+.matching_etablissements-adresse{
+    font-size: 0.9em;
+}
+
 #map {
     height: 580px;
 }
