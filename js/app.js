@@ -151,7 +151,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
       }
 
       if (labelNode.length > 0) {
-        node.forEach(function (v, k) {
+        labelNode.forEach(function (v, k) {
           v.textContent = label
         })
       }
