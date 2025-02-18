@@ -53,7 +53,7 @@
       <p><span class="categorie_entreprise">!!category</span>, <span class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span> personnes travaillent à cette adresse qui existe depuis le <span class="matching_etablissements-date_creation">!!date création</span></p>
       <ul class="administrative">
         <li><i class="fa-solid fa-box-archive"></i> Siret : <span class="matching_etablissements-siret">!!Siret</span></li>
-        <li><i class="fa-solid fa-user-tie"></i>Dirigeant : <span class="dirigeants">!!Dirigeant</span></li>
+        <li><i class="fa-solid fa-user-tie"></i>Dirigeants : <ul class="loop_dirigeants" data-template="list-dirigeants">!!Dirigeants</ul></li>
         <li>Catégorie : <span class="categorie_entreprise">!!category</span></li>
       </ul>
       <div id="details">
@@ -75,6 +75,11 @@
 
   <template id="list-template">
     <li class="item standard"><span class="label">!!label</span> : <span class="value">!!value</span></span></li>
+  </template>
+
+  
+  <template id="list-dirigeants">
+    <li class="item standard" title="" data-title="dirigeants-qualite"><span class="dirigeants-nom">!!nom</span> <span class="dirigeants-prenoms">!!prenoms</span></span></li>
   </template>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"

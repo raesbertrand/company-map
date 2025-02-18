@@ -88,7 +88,7 @@ function displayCompanyCard(markerDatas) {
   target.textContent = ""
   var template = document.querySelector("#company-card-template");
   var clone = document.importNode(template.content, true);
-  insertVarTemplate(["siret",siret],companyDetails, clone)
+  insertVarTemplate(["siret", siret], companyDetails, clone)
 
   target.appendChild(clone);
 }
@@ -108,24 +108,42 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
     else {
       key = parent + "-" + data[0]
     }
-    let value = data[1];
-    console.log(data[unicId[0]] && data[0]!=unicId[0] && data[unicId[0]]!=unicId[1])
 
-    if(data[unicId[0]] && data[0]!=unicId[0] && data[unicId[0]]!=unicId[1]){
+    let value = data[1];
+
+    if (data[unicId[0]] && data[0] != unicId[0] && data[unicId[0]] != unicId[1]) {
+      // Do not parse object if the collection is locked with a specific index
       return
     }
 
-    if (typeof (value) == "object" && value!=null) {
-      if(value[0]){
-        value.forEach(function(d,i){
-          insertVarTemplate(unicId, d, model, key)
+    if (typeof (value) == "object" && value != null) {
+      //process subobject
+      if (value[0]) {
+        let loop = model.querySelectorAll('.loop_' + key);
+        let looper = loop.length > 0 && loop[0].hasAttribute('data-template')
+        if (looper) {
+          loop[0].textContent = ""
+        }
+        value.forEach(function (d, i) {
+          if (looper) {
+            let tpl = document.querySelector("#" + loop[0].getAttribute('data-template'));
+            let submodel = document.importNode(tpl.content, true);
+
+            insertVarTemplate(unicId, d, submodel, key)
+            loop[0].appendChild(submodel);
+          }
+          else {
+            insertVarTemplate(unicId, d, model, key)
+          }
         })
       }
     }
     else {
+      //insert date
       let label = capitalizeFirstLetter(data[0].replace('_', ' '))
       let node = model.querySelectorAll('.' + key)
-      let labelNode=model.querySelectorAll('.' + key+'--label')
+      let labelNode = model.querySelectorAll('.' + key + '--label')
+
       if (node.length > 0) {
         node.forEach(function (v, k) {
           v.textContent = value
@@ -137,8 +155,6 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
           v.textContent = label
         })
       }
-      
-
     }
   });
 }
