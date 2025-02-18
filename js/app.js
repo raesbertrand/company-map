@@ -131,7 +131,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
       let loop = model.querySelectorAll('.loop_' + key);
       let looper = loop.length > 0 && loop[0].hasAttribute('data-template')
-      
+
       if (looper) {
         loop[0].textContent = ""
       }
@@ -139,7 +139,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
         if (looper) {
           let tpl = document.querySelector("#" + loop[0].getAttribute('data-template'));
           let submodel = document.importNode(tpl.content, true);
-          let disp=null
+          let disp = null
           if (type == 'array') {
             disp = d
           }
@@ -148,9 +148,10 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
             disp[d[0]] = d[1]
           }
 
-          if(disp){
+          if (disp) {
             insertVarTemplate(unicId, disp, submodel, key)
-            loop[0].appendChild(submodel);          }
+            loop[0].appendChild(submodel);
+          }
         }
         else {
           insertVarTemplate(unicId, d, model, key)
@@ -200,3 +201,12 @@ map.on('zoomend, moveend', function (e) {
   endpointParam.long = centre.lng
   companyApi.get(endpointParam, null, true)
 });
+
+modal.init();
+document
+  .querySelector(".open_modal")
+  .addEventListener("click", function (e) {
+    console.log(e)
+    
+    modal.open(e.srcElement.getAttribute('data-modal'));
+  });
