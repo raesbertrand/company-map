@@ -52,7 +52,7 @@ function createJsonViewer(json, container) {
     parent.appendChild(ul)
 
     Object.entries(obj).forEach(([key, value]) => {
-      if (value === false || value === null) return // Ne pas afficher les valeurs false et null
+      // if (value === false || value === null) return // Ne pas afficher les valeurs false et null
 
       const li = createElement("li", "json-node")
       const keySpan = createElement("span", "json-key", key + ": ")
@@ -118,31 +118,59 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
     if (typeof (value) == "object" && value != null) {
       //process subobject
+      let collec
+      let type
       if (value[0]) {
-        let loop = model.querySelectorAll('.loop_' + key);
-        let looper = loop.length > 0 && loop[0].hasAttribute('data-template')
-        if (looper) {
-          loop[0].textContent = ""
-        }
-        value.forEach(function (d, i) {
-          if (looper) {
-            let tpl = document.querySelector("#" + loop[0].getAttribute('data-template'));
-            let submodel = document.importNode(tpl.content, true);
-
-            insertVarTemplate(unicId, d, submodel, key)
-            loop[0].appendChild(submodel);
-          }
-          else {
-            insertVarTemplate(unicId, d, model, key)
-          }
-        })
+        collec = value
+        type = 'array'
       }
+      else {
+        collec = Object.entries(value)
+        type = 'json'
+      }
+
+      let loop = model.querySelectorAll('.loop_' + key);
+      let looper = loop.length > 0 && loop[0].hasAttribute('data-template')
+      
+      if (looper) {
+        loop[0].textContent = ""
+      }
+      collec.forEach(function (d, i) {
+        if (looper) {
+          let tpl = document.querySelector("#" + loop[0].getAttribute('data-template'));
+          let submodel = document.importNode(tpl.content, true);
+          let disp=null
+          if (type == 'array') {
+            disp = d
+          }
+          else if (d[1]) {
+            disp = {}
+            disp[d[0]] = d[1]
+          }
+
+          if(disp){
+            insertVarTemplate(unicId, disp, submodel, key)
+            loop[0].appendChild(submodel);          }
+        }
+        else {
+          insertVarTemplate(unicId, d, model, key)
+        }
+      })
     }
     else {
-      //insert date
-      let label = capitalizeFirstLetter(data[0].replace('_', ' '))
-      let node = model.querySelectorAll('.' + key)
-      let labelNode = model.querySelectorAll('.' + key + '--label')
+      //insert data
+      let label = capitalizeFirstLetter(data[0].replaceAll('_', ' '))
+      let node
+      let labelNode
+
+      if (model.querySelectorAll('.standard').length > 0) {
+        node = model.querySelectorAll('.standard .value')
+        labelNode = model.querySelectorAll('.standard .label')
+      }
+      else {
+        node = model.querySelectorAll('.' + key)
+        labelNode = model.querySelectorAll('.' + key + '--label')
+      }
 
       if (node.length > 0) {
         node.forEach(function (v, k) {
@@ -155,6 +183,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
           v.textContent = label
         })
       }
+
     }
   });
 }

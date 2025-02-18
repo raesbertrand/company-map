@@ -73,6 +73,9 @@
           <li><span class="statut_diffusion--label">!!label statut_diffusion</span> : <span class="statut_diffusion">!!statut_diffusion</span></li>
         </ul>
       </div>
+      <div class="complements">
+        <h2>Compléments</h2>
+      <ul class="loop_complements" data-template="list-template">!!Complements</ul>
       <!-- TODO : add node finances -->
       <!-- TODO : add node complements -->
       <!-- TODO : link to  https://annuaire-entreprises.data.gouv.fr/etablissement/[[siret]] -->
@@ -85,7 +88,7 @@
 
   
   <template id="list-dirigeants">
-    <li class="item standard" title="" data-title="dirigeants-qualite"><span class="dirigeants-nom">!!nom</span> <span class="dirigeants-prenoms">!!prenoms</span></span></li>
+    <li class="item" title="" data-title="dirigeants-qualite"><span class="dirigeants-nom">!!nom</span> <span class="dirigeants-prenoms">!!prenoms</span></span></li>
   </template>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
