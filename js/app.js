@@ -197,10 +197,14 @@ function displayValue(data){
       break;
     case 'false':
       output="non";
-      break;
-      
+      break;      
     default:
       output=data
+  }
+
+  let testNumber=Number(data)
+  if(typeof testNumber=='number'){
+   output= testNumber
   }
   return output;
 }
