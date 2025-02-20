@@ -177,7 +177,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
       if (node.length > 0) {
         node.forEach(function (v, k) {
-          v.textContent = value
+          v.textContent = displayValue(value)
         })
       }
 
@@ -191,8 +191,6 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
   });
 }
 
-console.log(DateTime.fromISO('2017-05-15'))
-console.log(DateTime.fromISO('dididi'))
 
 function displayValue(data) {
   var output;
@@ -208,14 +206,14 @@ function displayValue(data) {
   }
 
   let testNumber = Number(data)
-  if (typeof testNumber == 'number') {
+  if (typeof testNumber == 'number' && !isNaN(testNumber)) {
     output = testNumber
     return output;
   }
 
   let testDate=DateTime.fromISO(data);
   if(!testDate.invalid){
-    output=testDate;
+    output=testDate.toLocaleString(DateTime.DATE_FULL);
     return output
   }
   return output;
