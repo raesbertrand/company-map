@@ -2,6 +2,8 @@ var endpointParam = env.defaultEndpointParams
 var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
 var collection = {}
+var DateTime = luxon.DateTime;
+
 const container = document.getElementById("json-container")
 
 const selectedCompany = new Company();
@@ -189,6 +191,9 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
   });
 }
 
+console.log(DateTime.fromISO('2017-05-15'))
+console.log(DateTime.fromISO('dididi'))
+
 function displayValue(data) {
   var output;
   switch (data) {
@@ -206,6 +211,12 @@ function displayValue(data) {
   if (typeof testNumber == 'number') {
     output = testNumber
     return output;
+  }
+
+  let testDate=DateTime.fromISO(data);
+  if(!testDate.invalid){
+    output=testDate;
+    return output
   }
   return output;
 }
