@@ -2,6 +2,8 @@ var endpointParam = env.defaultEndpointParams
 var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
 var collection = {}
+var DateTime = luxon.DateTime;
+
 const container = document.getElementById("json-container")
 
 const selectedCompany = new Company();
@@ -175,7 +177,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
       if (node.length > 0) {
         node.forEach(function (v, k) {
-          v.textContent = value
+          v.textContent = displayValue(value)
         })
       }
 
@@ -187,6 +189,34 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
     }
   });
+}
+
+
+function displayValue(data) {
+  var output;
+  switch (data) {
+    case 'true':
+      output = "oui";
+      break;
+    case 'false':
+      output = "non";
+      break;
+    default:
+      output = data
+  }
+
+  let testNumber = Number(data)
+  if (typeof testNumber == 'number' && !isNaN(testNumber)) {
+    output = testNumber
+    return output;
+  }
+
+  let testDate=DateTime.fromISO(data);
+  if(!testDate.invalid){
+    output=testDate.toLocaleString(DateTime.DATE_FULL);
+    return output
+  }
+  return output;
 }
 
 
@@ -207,6 +237,6 @@ document
   .querySelector(".open_modal")
   .addEventListener("click", function (e) {
     console.log(e)
-    
+
     modal.open(e.srcElement.getAttribute('data-modal'));
   });
