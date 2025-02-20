@@ -189,22 +189,23 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
   });
 }
 
-function displayValue(data){
+function displayValue(data) {
   var output;
-  switch (data){
+  switch (data) {
     case 'true':
-      output="oui";
+      output = "oui";
       break;
     case 'false':
-      output="non";
-      break;      
+      output = "non";
+      break;
     default:
-      output=data
+      output = data
   }
 
-  let testNumber=Number(data)
-  if(typeof testNumber=='number'){
-   output= testNumber
+  let testNumber = Number(data)
+  if (typeof testNumber == 'number') {
+    output = testNumber
+    return output;
   }
   return output;
 }
@@ -227,6 +228,6 @@ document
   .querySelector(".open_modal")
   .addEventListener("click", function (e) {
     console.log(e)
-    
+
     modal.open(e.srcElement.getAttribute('data-modal'));
   });
