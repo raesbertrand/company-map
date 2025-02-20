@@ -189,6 +189,22 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
   });
 }
 
+function displayValue(data){
+  var output;
+  switch (data){
+    case 'true':
+      output="oui";
+      break;
+    case 'false':
+      output="non";
+      break;
+      
+    default:
+      output=data
+  }
+  return output;
+}
+
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
