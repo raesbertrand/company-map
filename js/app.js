@@ -1,9 +1,24 @@
 var endpointParam = env.defaultEndpointParams
+var collection = new GeoJsonGenerator()
+var pointsCollection = collection.getCollection()
+
+
 var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
-var collection = new GeoJsonGenerator()
+map._layersMaxZoom = 16;
+map.whenReady(onMapLoad);
 
-var pointsCollection = collection.getCollection()
+
+function onMapLoad(){
+  geoJsonLayer = L.geoJSON(pointsCollection,
+    {
+      onEachFeature: onEachFeature
+    }
+  ).addTo(map)
+  
+  markers.addLayer(geoJsonLayer)
+  map.addLayer(markers);
+}
 
 var DateTime = luxon.DateTime
 
@@ -29,8 +44,9 @@ var i=1
 
 
 function feedMap(companies) {
-  console.log(pointsCollection); if(i==30) { return false; }
-  i++
+  console.log(pointsCollection); 
+  if(i==30) { return false; }
+  // i++
   companies.forEach((company) => {
     if (company.date_fermeture == null) {
       company.matching_etablissements.forEach((etablissement) => {
@@ -40,8 +56,13 @@ function feedMap(companies) {
         ) {
           let converter = new GeoJsonConverter()
           let feature = converter.convertItem([Number(etablissement.longitude), Number(etablissement.latitude)], company, company.nom_complet, etablissement.siret)
-
+          // geoJsonLayer = L.geoJSON(feature
+          //   , {
+          //     onEachFeature: onEachFeature
+          //   }
+          // )
           collection.addFeature(feature)
+          map.addData(feature)
           // console.log(collection.getCollection())
 
           // collection[etablissement.siret] = company;
@@ -56,18 +77,18 @@ function feedMap(companies) {
         }
       })
     }
-
   })
 
-  geoJsonLayer = L.geoJSON(pointsCollection
-    , {
-      onEachFeature: onEachFeature
-    }
-  )
-  markers.addLayer(geoJsonLayer)
-  map.addLayer(markers);
+  // geoJsonLayer = L.geoJSON(pointsCollection
+  //   , {
+  //     onEachFeature: onEachFeature
+  //   }
+  // )
+  // geoJsonLayer.addTo(map)
+  // markers.addLayer(geoJsonLayer)
+  // map.addLayer(markers);
 
-  console.log(collection.testDuplicateId("35600000016743").length)
+  console.log(collection.testDuplicateId("35600000016743"))
 }
 
 function onEachFeature(feature, layer) {
