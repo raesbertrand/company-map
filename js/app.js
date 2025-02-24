@@ -1,8 +1,11 @@
 var endpointParam = env.defaultEndpointParams
 var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
-var collection = {}
-var DateTime = luxon.DateTime;
+var collection = new GeoJsonGenerator()
+
+var pointsCollection = collection.getCollection()
+
+var DateTime = luxon.DateTime
 
 const container = document.getElementById("json-container")
 
@@ -14,6 +17,7 @@ document.addEventListener("companyDataUpdated", (event) => {
 })
 
 const companyApi = new Api(env.endpoint, "datagouvEntreprises")
+//todo false to true for load all datas
 companyApi.get(endpointParam, null, true)
 
 document.addEventListener("datagouvEntreprises", (event) => {
@@ -21,24 +25,62 @@ document.addEventListener("datagouvEntreprises", (event) => {
   feedMap(apiResult.results)
 })
 
+var i=1
+
+
 function feedMap(companies) {
+  console.log(pointsCollection); if(i==30) { return false; }
+  i++
   companies.forEach((company) => {
     if (company.date_fermeture == null) {
       company.matching_etablissements.forEach((etablissement) => {
-        if (etablissement.date_fermeture == null && !collection[etablissement.siret]) {
-          collection[etablissement.siret] = company;
-          markers.addLayer(
-            L.marker([etablissement.latitude, etablissement.longitude])
-              .bindPopup(company.nom_complet)
-              .on("click", function (e) {
-                selectedCompany.update({ "siret": etablissement.siret, "company": company })
-              })
-          )
-            .addTo(map)
+        if (etablissement.date_fermeture == null
+          // && !collection[etablissement.siret]
+          && !collection.searchId(etablissement.siret)
+        ) {
+          let converter = new GeoJsonConverter()
+          let feature = converter.convertItem([Number(etablissement.longitude), Number(etablissement.latitude)], company, company.nom_complet, etablissement.siret)
+
+          collection.addFeature(feature)
+          // console.log(collection.getCollection())
+
+          // collection[etablissement.siret] = company;
+          // markers.addLayer(
+          //   L.marker([etablissement.latitude, etablissement.longitude])
+          //     .bindPopup(company.nom_complet)
+          //     .on("click", function (e) {
+          //       selectedCompany.update({ "siret": etablissement.siret, "company": company })
+          //     })
+          // )
+          //   .addTo(map)
         }
       })
     }
+
   })
+
+  geoJsonLayer = L.geoJSON(pointsCollection
+    , {
+      onEachFeature: onEachFeature
+    }
+  )
+  markers.addLayer(geoJsonLayer)
+  map.addLayer(markers);
+
+  console.log(collection.testDuplicateId("35600000016743").length)
+}
+
+function onEachFeature(feature, layer) {
+  console.log()
+  layer.bindPopup(feature.properties.nom_complet)
+  .on("click", function (e) {
+          selectedCompany.update({ "siret": feature.id, "company": feature.properties })
+        })
+  // .addTo(map);
+
+  // map.addLayer(markers)
+  // map.fitBounds(markers.getBounds())
+
 }
 
 function createJsonViewer(json, container) {
@@ -211,9 +253,9 @@ function displayValue(data) {
     return output;
   }
 
-  let testDate=DateTime.fromISO(data);
-  if(!testDate.invalid){
-    output=testDate.toLocaleString(DateTime.DATE_FULL);
+  let testDate = DateTime.fromISO(data);
+  if (!testDate.invalid) {
+    output = testDate.toLocaleString(DateTime.DATE_FULL);
     return output
   }
   return output;
