@@ -214,13 +214,18 @@ function displayValue(data) {
   var output;
   switch (data) {
     case 'true':
+    case true :
       output = "oui";
       break;
     case 'false':
+    case false :
       output = "non";
       break;
     default:
       output = data
+  }
+  if(output){
+    return output
   }
 
   let testNumber = Number(data)
