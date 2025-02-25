@@ -1,106 +1,61 @@
+
+const companyApi = new Api(env.endpoint, "datagouvEntreprises")
+const selectedCompany = new Company();
+const container = document.getElementById("json-container")
+
 var endpointParam = env.defaultEndpointParams
 var collection = new GeoJsonGenerator()
 var pointsCollection = collection.getCollection()
-
-
 var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
-map._layersMaxZoom = 16;
-map.whenReady(onMapLoad);
-
-
-function onMapLoad(){
-  geoJsonLayer = L.geoJSON(pointsCollection,
-    {
-      onEachFeature: onEachFeature
-    }
-  ).addTo(map)
-  
-  markers.addLayer(geoJsonLayer)
-  map.addLayer(markers);
-}
-
 var DateTime = luxon.DateTime
 
-const container = document.getElementById("json-container")
 
-const selectedCompany = new Company();
+var geoJsonLayer = L.geoJSON(pointsCollection,
+  {
+    onEachFeature: onEachFeature
+  }
+)
+
+companyApi.get(endpointParam, null, true)
+
 document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = ""
   createJsonViewer(event.detail, container)
   displayCompanyCard(event.detail)
 })
 
-const companyApi = new Api(env.endpoint, "datagouvEntreprises")
-//todo false to true for load all datas
-companyApi.get(endpointParam, null, true)
-
 document.addEventListener("datagouvEntreprises", (event) => {
   let apiResult = event.detail
   feedMap(apiResult.results)
 })
 
-var i=1
-
-
 function feedMap(companies) {
-  console.log(pointsCollection); 
-  if(i==30) { return false; }
-  // i++
   companies.forEach((company) => {
     if (company.date_fermeture == null) {
       company.matching_etablissements.forEach((etablissement) => {
         if (etablissement.date_fermeture == null
-          // && !collection[etablissement.siret]
           && !collection.searchId(etablissement.siret)
         ) {
           let converter = new GeoJsonConverter()
           let feature = converter.convertItem([Number(etablissement.longitude), Number(etablissement.latitude)], company, company.nom_complet, etablissement.siret)
-          // geoJsonLayer = L.geoJSON(feature
-          //   , {
-          //     onEachFeature: onEachFeature
-          //   }
-          // )
-          collection.addFeature(feature)
-          map.addData(feature)
-          // console.log(collection.getCollection())
 
-          // collection[etablissement.siret] = company;
-          // markers.addLayer(
-          //   L.marker([etablissement.latitude, etablissement.longitude])
-          //     .bindPopup(company.nom_complet)
-          //     .on("click", function (e) {
-          //       selectedCompany.update({ "siret": etablissement.siret, "company": company })
-          //     })
-          // )
-          //   .addTo(map)
+          collection.addFeature(feature)
+          geoJsonLayer.addData(feature)
+
+          markers.addLayer(geoJsonLayer)
+            .addTo(map)
         }
       })
     }
   })
-
-  // geoJsonLayer = L.geoJSON(pointsCollection
-  //   , {
-  //     onEachFeature: onEachFeature
-  //   }
-  // )
-  // geoJsonLayer.addTo(map)
-  // markers.addLayer(geoJsonLayer)
-  // map.addLayer(markers);
-
-  console.log(collection.testDuplicateId("35600000016743"))
 }
 
 function onEachFeature(feature, layer) {
-  console.log()
   layer.bindPopup(feature.properties.nom_complet)
-  .on("click", function (e) {
-          selectedCompany.update({ "siret": feature.id, "company": feature.properties })
-        })
-  // .addTo(map);
-
-  // map.addLayer(markers)
-  // map.fitBounds(markers.getBounds())
+    .on("click", function (e) {
+      selectedCompany.update({ "siret": feature.id, "company": feature.properties })
+    })
 
 }
 

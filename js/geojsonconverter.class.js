@@ -63,8 +63,6 @@ class GeoJsonGenerator {
         return true
     }
 
-
-
     getCollection() {
         return this.featureCollection
     }
@@ -83,25 +81,16 @@ class GeoJsonGenerator {
     }
 
     searchId(id) {
-        // if (geojson.type === 'FeatureCollection') {
-            console.log(JSON.stringify(this.featureCollection.features))
-
-            for (let i = 0; i < this.featureCollection.features.length; i++) {
-                console.log(this.featureCollection.features[i].id, id)
-                if (this.featureCollection.features[i].id === id) {
-                    return this.featureCollection.features[i];
-                }
+        for (let i = 0; i < this.featureCollection.features.length; i++) {
+            if (this.featureCollection.features[i].id === id) {
+                return this.featureCollection.features[i];
             }
-        // } else if (geojson.type === 'Feature') {
-        //     if (geojson.id === id) {
-        //         return geojson;
-        //     }
-        // }
+        }
         return null;
     }
 
-    testDuplicateId(id){
-        let output=[]
+    testDuplicateId(id) {
+        let output = []
         for (let i = 0; i < this.featureCollection.features.length; i++) {
             if (this.featureCollection.features[i].id === id) {
                 output.push(this.featureCollection.features[i]);
