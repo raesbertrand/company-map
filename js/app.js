@@ -215,6 +215,7 @@ function displayValue(data) {
   if(data===null){
     return data
   }
+
   switch (data) {
     case 'true':
     case true :
@@ -227,7 +228,7 @@ function displayValue(data) {
     default:
       output = data
   }
-  if(output){
+  if(output!=data){
     return output
   }
 
