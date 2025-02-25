@@ -212,6 +212,9 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
 function displayValue(data) {
   var output;
+  if(data===null){
+    return data
+  }
   switch (data) {
     case 'true':
     case true :
