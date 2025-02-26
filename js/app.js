@@ -10,6 +10,9 @@ var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
 var DateTime = luxon.DateTime
 
+let filtersForm = document.querySelector('#filters form');
+
+
 var filters = {
   "est_bio": false,
   "est_association": false
@@ -24,6 +27,21 @@ var geoJsonLayer = L.geoJSON(pointsCollection,
 )
 
 companyApi.get(endpointParam, null, true)
+
+filtersForm.addEventListener('change', function (event) {
+	let field = event.target;
+  filters[field.name]=field.checked
+
+  console.log(geoJsonLayer)
+  map.removeLayer(markers);
+  
+  geoJsonLayer = L.geoJSON(collection.getCollection(),
+    {
+      onEachFeature: onEachFeature,
+      filter: geoJsonfilter
+    }
+  )
+});
 
 document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = ""
@@ -45,7 +63,7 @@ function feedMap(companies) {
         ) {
           let converter = new GeoJsonConverter()
           let feature = converter.convertItem([Number(etablissement.longitude), Number(etablissement.latitude)], company, company.nom_complet, etablissement.siret)
-
+          
           collection.addFeature(feature)
           geoJsonLayer.addData(feature)
 
@@ -55,6 +73,10 @@ function feedMap(companies) {
       })
     }
   })
+}
+
+function addPoint(){
+
 }
 
 function onEachFeature(feature, layer) {
