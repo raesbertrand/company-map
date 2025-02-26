@@ -10,17 +10,16 @@ var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
 var DateTime = luxon.DateTime
 
-var filters={
-  "complements":{
-    "est_bio":true
-  }
+var filters = {
+  "est_bio": false,
+  "est_association": false
 }
 
 
 var geoJsonLayer = L.geoJSON(pointsCollection,
   {
     onEachFeature: onEachFeature,
-    filter:geoJsonfilter
+    filter: geoJsonfilter
   }
 )
 
@@ -65,43 +64,40 @@ function onEachFeature(feature, layer) {
     })
 }
 
-function geoJsonfilter(feature){
-  // var obj=filters
-  // var key
-  // var val 
-  // for (let k in obj) {
-  //   if (obj.hasOwnProperty(k)) {
-  //     if (k === key && obj[k] === val) {
-  //       results.push(obj);
-  //     } else if (typeof obj[k] === "object") {
-  //       results = results.concat(searchJSON(obj[k], key, val));
-  //     }
-  //   }
-  // }
-  var datas=feature.properties 
-  // console.log(datas)
-  for(let key in filters){
-    // console.log(key, filters[key])
-    var search=searchJSON(datas, key, filters[key])
-    if(search.length>0){
-      console.log(search.length)
+function geoJsonfilter(feature) {
+  var datas = feature.properties
+  var noFilter = true
+
+  for (let key in filters) {
+    if (filters[key] !== false) {
+      noFilter = false
+      break
     }
   }
-  return true
+
+  if (noFilter == true) {
+    return true
+  }
+
+  for (let key in filters) {
+    if (filters[key] == true) {
+      var search = searchJSON(datas, key, filters[key])
+      if (search.length > 0) {
+        return true
+      }
+
+    }
+  }
+  return false
 }
 
 function searchJSON(obj, key, val) {
   let results = [];
   for (let k in obj) {
-    // console.log(k)
     if (obj.hasOwnProperty(k)) {
-      if(k=="est_bio"){
-        console.log('bio', obj[k], val)
-      }
       if (k === key && obj[k] === val) {
         results.push(obj);
       } else if (typeof obj[k] === "object") {
-        // console.log(obj[k], key, val)
         results = results.concat(searchJSON(obj[k], key, val));
       }
     }
@@ -262,23 +258,23 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
 function displayValue(data) {
   var output;
-  if(data===null){
+  if (data === null) {
     return data
   }
 
   switch (data) {
     case 'true':
-    case true :
+    case true:
       output = "oui";
       break;
     case 'false':
-    case false :
+    case false:
       output = "non";
       break;
     default:
       output = data
   }
-  if(output!=data){
+  if (output != data) {
     return output
   }
 
