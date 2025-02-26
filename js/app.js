@@ -10,10 +10,17 @@ var markers = L.markerClusterGroup();
 var map = L.map("map").setView([47.450999, -0.555489], 16)
 var DateTime = luxon.DateTime
 
+var filters={
+  "complements":{
+    "est_bio":true
+  }
+}
+
 
 var geoJsonLayer = L.geoJSON(pointsCollection,
   {
-    onEachFeature: onEachFeature
+    onEachFeature: onEachFeature,
+    filter:geoJsonfilter
   }
 )
 
@@ -56,7 +63,50 @@ function onEachFeature(feature, layer) {
     .on("click", function (e) {
       selectedCompany.update({ "siret": feature.id, "company": feature.properties })
     })
+}
 
+function geoJsonfilter(feature){
+  // var obj=filters
+  // var key
+  // var val 
+  // for (let k in obj) {
+  //   if (obj.hasOwnProperty(k)) {
+  //     if (k === key && obj[k] === val) {
+  //       results.push(obj);
+  //     } else if (typeof obj[k] === "object") {
+  //       results = results.concat(searchJSON(obj[k], key, val));
+  //     }
+  //   }
+  // }
+  var datas=feature.properties 
+  // console.log(datas)
+  for(let key in filters){
+    // console.log(key, filters[key])
+    var search=searchJSON(datas, key, filters[key])
+    if(search.length>0){
+      console.log(search.length)
+    }
+  }
+  return true
+}
+
+function searchJSON(obj, key, val) {
+  let results = [];
+  for (let k in obj) {
+    // console.log(k)
+    if (obj.hasOwnProperty(k)) {
+      if(k=="est_bio"){
+        console.log('bio', obj[k], val)
+      }
+      if (k === key && obj[k] === val) {
+        results.push(obj);
+      } else if (typeof obj[k] === "object") {
+        // console.log(obj[k], key, val)
+        results = results.concat(searchJSON(obj[k], key, val));
+      }
+    }
+  }
+  return results;
 }
 
 function createJsonViewer(json, container) {
@@ -263,7 +313,5 @@ modal.init();
 document
   .querySelector(".open_modal")
   .addEventListener("click", function (e) {
-    console.log(e)
-
     modal.open(e.srcElement.getAttribute('data-modal'));
   });
