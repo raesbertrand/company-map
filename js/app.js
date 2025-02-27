@@ -29,18 +29,16 @@ var geoJsonLayer = L.geoJSON(pointsCollection,
 companyApi.get(endpointParam, null, true)
 
 filtersForm.addEventListener('change', function (event) {
-	let field = event.target;
-  filters[field.name]=field.checked
-
-  console.log(geoJsonLayer)
-  map.removeLayer(markers);
+  let field = event.target;
+  filters[field.name] = field.checked
   
-  geoJsonLayer = L.geoJSON(collection.getCollection(),
-    {
-      onEachFeature: onEachFeature,
-      filter: geoJsonfilter
-    }
-  )
+  geoJsonLayer.clearLayers();
+  markers.clearLayers();
+
+  let geo = collection.getCollection()
+  geo["features"].forEach(feature => {
+    addPoint(feature)
+  })
 });
 
 document.addEventListener("companyDataUpdated", (event) => {
@@ -63,19 +61,20 @@ function feedMap(companies) {
         ) {
           let converter = new GeoJsonConverter()
           let feature = converter.convertItem([Number(etablissement.longitude), Number(etablissement.latitude)], company, company.nom_complet, etablissement.siret)
-          
-          collection.addFeature(feature)
-          geoJsonLayer.addData(feature)
 
-          markers.addLayer(geoJsonLayer)
-            .addTo(map)
+          collection.addFeature(feature)
+          addPoint(feature)
         }
       })
     }
   })
 }
 
-function addPoint(){
+function addPoint(feature) {
+  geoJsonLayer.addData(feature)
+
+  markers.addLayer(geoJsonLayer)
+    .addTo(map)
 
 }
 
@@ -89,7 +88,7 @@ function onEachFeature(feature, layer) {
 function geoJsonfilter(feature) {
   var datas = feature.properties
   var noFilter = true
-
+  
   for (let key in filters) {
     if (filters[key] !== false) {
       noFilter = false
@@ -100,7 +99,7 @@ function geoJsonfilter(feature) {
   if (noFilter == true) {
     return true
   }
-
+  
   for (let key in filters) {
     if (filters[key] == true) {
       var search = searchJSON(datas, key, filters[key])
@@ -110,6 +109,7 @@ function geoJsonfilter(feature) {
 
     }
   }
+  // console.log('nop')
   return false
 }
 
