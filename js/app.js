@@ -106,7 +106,7 @@ function injectFilters() {
     let clone = document.importNode(template.content, true);
 
     let value = filters[key]
-    let label = capitalizeFirstLetter(key.replaceAll('est_', ''))
+    let label = capitalizeFirstLetter(key.replaceAll('est_', '').replaceAll('_', ' '))
 
     let labelNode = clone.querySelector('label')
     labelNode.setAttribute("for", key)
