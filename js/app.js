@@ -44,7 +44,6 @@ companyApi.get(endpointParam, null, true)
 filtersForm.addEventListener('change', function (event) {
   let field = event.target;
   filters[field.name] = field.checked
-  console.log(filters)
   geoJsonLayer.clearLayers();
   markers.clearLayers();
 
@@ -256,14 +255,12 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
       let loop = model.querySelectorAll('.loop_' + key);
       let looper = loop.length > 0 && loop[0].hasAttribute('data-template')
-
+      
       if (looper) {
         loop[0].textContent = ""
       }
       collec.forEach(function (d, i) {
         if (looper) {
-          let tpl = document.querySelector("#" + loop[0].getAttribute('data-template'));
-          let submodel = document.importNode(tpl.content, true);
           let disp = null
           if (type == 'array') {
             disp = d
@@ -274,6 +271,9 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
           }
 
           if (disp) {
+            let tpl = document.querySelector("#" + loop[0].getAttribute('data-template'));
+            let submodel = document.importNode(tpl.content, true);
+
             insertVarTemplate(unicId, disp, submodel, key)
             loop[0].appendChild(submodel);
           }
@@ -288,10 +288,13 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
       let label = capitalizeFirstLetter(data[0].replaceAll('_', ' '))
       let node
       let labelNode
-
-      if (model.querySelectorAll('.standard').length > 0) {
+      
+      let stdModel=model.querySelectorAll('.standard')
+      if (stdModel.length > 0) {
         node = model.querySelectorAll('.standard .value')
         labelNode = model.querySelectorAll('.standard .label')
+        
+        stdModel[0].classList.remove('standard')
       }
       else {
         node = model.querySelectorAll('.' + key)
