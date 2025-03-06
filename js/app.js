@@ -1,20 +1,64 @@
-var endpointParam = env.defaultEndpointParams
-var markers = L.markerClusterGroup();
-var map = L.map("map").setView([47.450999, -0.555489], 16)
-var collection = {}
-var DateTime = luxon.DateTime;
 
+const companyApi = new Api(env.endpoint, "datagouvEntreprises")
+const selectedCompany = new Company();
 const container = document.getElementById("json-container")
 
-const selectedCompany = new Company();
+var endpointParam = env.defaultEndpointParams
+var collection = new GeoJsonGenerator()
+var pointsCollection = collection.getCollection()
+var markers = L.markerClusterGroup();
+var map = L.map("map").setView([47.450999, -0.555489], 16)
+var DateTime = luxon.DateTime
+
+let filtersForm = document.querySelector('#filters form');
+
+
+var filters = {
+  "est_association": false,
+  "est_bio": false,
+  "est_entrepreneur_individuel": false,
+  "est_entrepreneur_spectacle": false,
+  "est_ess": false,
+  "est_finess": false,
+  "est_organisme_formation": false,
+  "est_qualiopi": false,
+  "est_rge": false,
+  "est_service_public": false,
+  "est_societe_mission": false,
+  "est_uai": false,
+  "statut_bio": false
+}
+
+injectFilters()
+
+
+var geoJsonLayer = L.geoJSON(pointsCollection,
+  {
+    onEachFeature: onEachFeature,
+    filter: geoJsonfilter
+  }
+)
+
+companyApi.get(endpointParam, null, true)
+
+filtersForm.addEventListener('change', function (event) {
+  let field = event.target;
+  filters[field.name] = field.checked
+  console.log(filters)
+  geoJsonLayer.clearLayers();
+  markers.clearLayers();
+
+  let geo = collection.getCollection()
+  geo["features"].forEach(feature => {
+    addPoint(feature)
+  })
+});
+
 document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = ""
   createJsonViewer(event.detail, container)
   displayCompanyCard(event.detail)
 })
-
-const companyApi = new Api(env.endpoint, "datagouvEntreprises")
-companyApi.get(endpointParam, null, true)
 
 document.addEventListener("datagouvEntreprises", (event) => {
   let apiResult = event.detail
@@ -25,20 +69,99 @@ function feedMap(companies) {
   companies.forEach((company) => {
     if (company.date_fermeture == null) {
       company.matching_etablissements.forEach((etablissement) => {
-        if (etablissement.date_fermeture == null && !collection[etablissement.siret]) {
-          collection[etablissement.siret] = company;
-          markers.addLayer(
-            L.marker([etablissement.latitude, etablissement.longitude])
-              .bindPopup(company.nom_complet)
-              .on("click", function (e) {
-                selectedCompany.update({ "siret": etablissement.siret, "company": company })
-              })
-          )
-            .addTo(map)
+        if (etablissement.date_fermeture == null
+          && !collection.searchId(etablissement.siret)
+        ) {
+          let converter = new GeoJsonConverter()
+          let feature = converter.convertItem([Number(etablissement.longitude), Number(etablissement.latitude)], company, company.nom_complet, etablissement.siret)
+
+          collection.addFeature(feature)
+          addPoint(feature)
         }
       })
     }
   })
+}
+
+function addPoint(feature) {
+  geoJsonLayer.addData(feature)
+
+  markers.addLayer(geoJsonLayer)
+    .addTo(map)
+
+}
+
+function onEachFeature(feature, layer) {
+  layer.bindPopup(feature.properties.nom_complet)
+    .on("click", function (e) {
+      selectedCompany.update({ "siret": feature.id, "company": feature.properties })
+    })
+}
+
+
+function injectFilters() {
+  var template = document.querySelector("#bool-filter");
+  var target = document.querySelector("#filters form");
+  for (let key in filters) {
+    let clone = document.importNode(template.content, true);
+
+    let value = filters[key]
+    let label = capitalizeFirstLetter(key.replaceAll('est_', '').replaceAll('_', ' '))
+
+    let labelNode = clone.querySelector('label')
+    labelNode.setAttribute("for", key)
+    labelNode.textContent = label
+
+    let checkboxNode = clone.querySelector('input')
+    checkboxNode.setAttribute("name", key)
+    checkboxNode.setAttribute("id", key)
+    checkboxNode.checked = value
+
+    target.appendChild(clone);
+  }
+}
+
+
+function geoJsonfilter(feature) {
+  var datas = feature.properties
+  var noFilter = true
+
+  for (let key in filters) {
+    if (filters[key] !== false) {
+      noFilter = false
+      break
+    }
+  }
+
+  if (noFilter == true) {
+    return true
+  }
+
+  for (let key in filters) {
+    if (filters[key] == true) {
+      var search = searchJSON(datas, key, filters[key])
+      if (search.length > 0) {
+        return true
+      }
+
+    }
+  }
+
+  return false
+}
+
+function searchJSON(obj, key, val) {
+  let results = [];
+  for (let k in obj) {
+    if (obj.hasOwnProperty(k)) {
+      if (k === key && obj[k] === val) {
+        results.push(obj);
+      } else if (typeof obj[k] === "object") {
+        results = results.concat(searchJSON(obj[k], key, val));
+      }
+    }
+  }
+  return results;
 }
 
 function createJsonViewer(json, container) {
@@ -194,15 +317,24 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
 function displayValue(data) {
   var output;
+  if (data === null) {
+    return data
+  }
+
   switch (data) {
     case 'true':
+    case true:
       output = "oui";
       break;
     case 'false':
+    case false:
       output = "non";
       break;
     default:
       output = data
+  }
+  if (output != data) {
+    return output
   }
 
   let testNumber = Number(data)
@@ -211,9 +343,9 @@ function displayValue(data) {
     return output;
   }
 
-  let testDate=DateTime.fromISO(data);
-  if(!testDate.invalid){
-    output=testDate.toLocaleString(DateTime.DATE_FULL);
+  let testDate = DateTime.fromISO(data);
+  if (!testDate.invalid) {
+    output = testDate.toLocaleString(DateTime.DATE_FULL);
     return output
   }
   return output;
@@ -236,7 +368,5 @@ modal.init();
 document
   .querySelector(".open_modal")
   .addEventListener("click", function (e) {
-    console.log(e)
-
     modal.open(e.srcElement.getAttribute('data-modal'));
   });
