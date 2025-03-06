@@ -32,12 +32,7 @@
 
 <body>
   <div id="filters">
-    <form>
-      <label for="est_bio">Bio</label>
-      <input type="checkbox" name="est_bio" />
-      <label for="est_association">Association</label>
-      <input type="checkbox" name="est_association" />
-    </form>
+    <form></form>
   </div>
   <div class="grid">
     <!-- <div class="flex-row"> -->
@@ -51,6 +46,11 @@
     <!-- </div> -->
   </div>
   <div id="json-container" style="display: none"></div>
+
+  <template id="bool-filter">
+    <input type="checkbox" name="est_bio" />
+    <label for="est_bio">Bio</label>
+  </template>
 
   <template id="company-card-template">
     <div class="title">

@@ -14,9 +14,22 @@ let filtersForm = document.querySelector('#filters form');
 
 
 var filters = {
+  "est_association": false,
   "est_bio": false,
-  "est_association": false
+  "est_entrepreneur_individuel": false,
+  "est_entrepreneur_spectacle": false,
+  "est_ess": false,
+  "est_finess": false,
+  "est_organisme_formation": false,
+  "est_qualiopi": false,
+  "est_rge": false,
+  "est_service_public": false,
+  "est_societe_mission": false,
+  "est_uai": false,
+  "statut_bio": false
 }
+
+injectFilters()
 
 
 var geoJsonLayer = L.geoJSON(pointsCollection,
@@ -31,7 +44,7 @@ companyApi.get(endpointParam, null, true)
 filtersForm.addEventListener('change', function (event) {
   let field = event.target;
   filters[field.name] = field.checked
-  
+  console.log(filters)
   geoJsonLayer.clearLayers();
   markers.clearLayers();
 
@@ -85,10 +98,34 @@ function onEachFeature(feature, layer) {
     })
 }
 
+
+function injectFilters() {
+  var template = document.querySelector("#bool-filter");
+  var target = document.querySelector("#filters form");
+  for (let key in filters) {
+    let clone = document.importNode(template.content, true);
+
+    let value = filters[key]
+    let label = capitalizeFirstLetter(key.replaceAll('est_', ''))
+
+    let labelNode = clone.querySelector('label')
+    labelNode.setAttribute("for", key)
+    labelNode.textContent = label
+
+    let checkboxNode = clone.querySelector('input')
+    checkboxNode.setAttribute("name", key)
+    checkboxNode.setAttribute("id", key)
+    checkboxNode.checked = value
+
+    target.appendChild(clone);
+  }
+}
+
+
 function geoJsonfilter(feature) {
   var datas = feature.properties
   var noFilter = true
-  
+
   for (let key in filters) {
     if (filters[key] !== false) {
       noFilter = false
@@ -99,7 +136,7 @@ function geoJsonfilter(feature) {
   if (noFilter == true) {
     return true
   }
-  
+
   for (let key in filters) {
     if (filters[key] == true) {
       var search = searchJSON(datas, key, filters[key])
@@ -109,7 +146,7 @@ function geoJsonfilter(feature) {
 
     }
   }
-  // console.log('nop')
+
   return false
 }
 

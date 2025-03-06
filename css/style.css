@@ -55,3 +55,14 @@ h2{
     color:var(--blue-color);
 
 }
+
+#filters{
+    padding: 10px 5px;
+    border-bottom: 1px solid var(--lighter-grey-color);
+}
+
+#filters label{
+    margin-right: 15px;
+    cursor: pointer;
+}
+
