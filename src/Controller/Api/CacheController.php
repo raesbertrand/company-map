@@ -6,6 +6,7 @@ class CacheController extends BaseController
     protected $cacheModel = null;
     public function __construct(){
         
+        parent::__construct();
         $this->cacheModel = new CacheModel();
     }
 /**
