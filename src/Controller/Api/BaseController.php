@@ -1,6 +1,14 @@
 <?php
 class BaseController
 {
+    
+    protected $requestMethod = null;
+
+    public function __construct()
+    {
+        $this->requestMethod = $_SERVER["REQUEST_METHOD"];
+    }
+
     /**
      * __call magic method.
      */
