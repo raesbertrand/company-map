@@ -2,7 +2,7 @@
 require_once PROJECT_ROOT_PATH . "/Model/Database.php";
 class NoteModel extends Database
 {
-    public function getNotesForCompany($siret, $limit=150)
+    public function getNotesForCompany($siret, $limit=10)
     {
         return $this->select("SELECT * FROM company_notes WHERE siret=? ORDER BY created_at ASC LIMIT ?", ["si", $siret, $limit]);
     }
