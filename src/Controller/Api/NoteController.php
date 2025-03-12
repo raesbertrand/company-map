@@ -3,8 +3,9 @@
 class NoteController extends BaseController
 {
     protected $noteModel = null;
-    public function __construct(){
-        
+    public function __construct()
+    {
+
         parent::__construct();
         $this->noteModel = new NoteModel();
     }
@@ -16,8 +17,8 @@ class NoteController extends BaseController
     {
         $strErrorDesc = '';
         $strErrorHeader = null;
-        $responseData=null;
-        
+        $responseData = null;
+
         $arrQueryStringParams = $this->getQueryStringParams();
 
         if (strtoupper($this->requestMethod) == 'GET') {
@@ -48,17 +49,17 @@ class NoteController extends BaseController
     {
         $strErrorDesc = '';
         $strErrorHeader = null;
-        $responseData=null;
-        // $requestMethod = $_SERVER["REQUEST_METHOD"];
+        $responseData = null;
+
         $arrQueryStringParams = $this->getQueryStringParams();
         if (strtoupper($this->requestMethod) == 'GET' && isset($arrQueryStringParams['number'])) {
             try {
                 $intLimit = 100;
-                $siret=$arrQueryStringParams['number'];
+                $siret = $arrQueryStringParams['number'];
                 if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
                     $intLimit = $arrQueryStringParams['limit'];
-                } 
-                
+                }
+
                 $arrNotes = $this->noteModel->getNotesForCompany($siret, $intLimit);
                 $responseData = json_encode($arrNotes);
             } catch (Error $e) {
@@ -70,6 +71,38 @@ class NoteController extends BaseController
             $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
         }
 
+        // send output
+        $this->sendOutputManager($responseData, $strErrorDesc, $strErrorHeader);
+    }
+
+    /**
+     * "/note/insert" Endpoint - Insert notes for a specific company
+     */
+    function insertAction()
+    {
+        $strErrorHeader = null;
+        $strErrorDesc = '';
+        $responseData = null;
+
+        $arrBodyString = file_get_contents('php://input');
+        $arrBodyJson = json_decode($arrBodyString, TRUE);
+
+        $arrQueryStringParams = $this->getQueryStringParams();
+
+        if (strtoupper($this->requestMethod) == 'POST' && isset($arrBodyJson['siret']) && isset($arrBodyJson['note'])) {
+            try {
+                $insertNote=$this->noteModel->insertNote($arrBodyJson['siret'], $arrBodyJson['note']);
+                $responseData = json_encode($insertNote);
+            } catch (Error $e) {
+                $strErrorDesc = $e->getMessage() . 'Something went wrong! Please contact support.';
+                $strErrorHeader = 'HTTP/1.1 500 Internal Server Error';
+            }
+
+        } else {
+            $strErrorDesc = 'Method not supported';
+            $strErrorHeader = 'HTTP/1.1 422 Unprocessable Entity';
+        }
+        
         // send output
         $this->sendOutputManager($responseData, $strErrorDesc, $strErrorHeader);
     }
