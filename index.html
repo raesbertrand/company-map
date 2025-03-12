@@ -35,15 +35,12 @@
     <form></form>
   </div>
   <div class="grid">
-    <!-- <div class="flex-row"> -->
       <div id="left-column">
         <div id="company-card"></div>
-        <button class="open_modal" data-modal="json-container">Données brutes</button>
       </div>
       <div id="right-column">
         <div id="map"></div>
       </div>
-    <!-- </div> -->
   </div>
   <div id="json-container" style="display: none"></div>
 
@@ -54,8 +51,8 @@
 
   <template id="company-card-template">
     <div class="title">
-      <i class="icon fa-regular fa-building"></i>
-      <h1 class="nom_complet">!!Name</h1>
+      <h1><i class="icon fa-regular fa-building"></i> <span class="nom_complet">!!Name</span></h1>
+      <button class="open_modal" data-modal="json-container" class="raw_data">Données brutes</button>
       <p><i class="fa-solid fa-location-dot"></i>
         <span class="matching_etablissements-adresse">!!full address</span></p>
     </div>
@@ -89,6 +86,14 @@
       <!-- TODO : add node finances -->
       <!-- TODO : add node complements -->
       <!-- TODO : link to  https://annuaire-entreprises.data.gouv.fr/etablissement/[[siret]] -->
+    </div>
+    <div id="notes">
+      <h2>Notes</h2>
+      <ul><li><i class="date">!!Date</i> <span class="note">!!note</span></li></ul>
+      <form>
+        <textarea></textarea>
+        <input type="button" value="Envoyer" />
+      </form>
     </div>
   </template>
 
