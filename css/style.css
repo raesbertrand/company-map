@@ -73,7 +73,7 @@ h2{
     cursor: pointer;
 }
 
-button, input[type=button]{
+button, input[type=button], input[type=submit]{
     background: #fff;
     border:1px solid #aaa;
     cursor: pointer;

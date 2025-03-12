@@ -66,7 +66,7 @@ COMMIT;
 DROP TABLE IF EXISTS `company_notes`;
 CREATE TABLE IF NOT EXISTS `company_notes` (
   `id` int NOT NULL AUTO_INCREMENT,
-  `siret` int NOT NULL,
+  `siret` varchar(14) NOT NULL,
   `note` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`)

@@ -59,10 +59,25 @@ document.addEventListener("companyDataUpdated", (event) => {
   displayCompanyCard(event.detail)
 
   document
-    .querySelector(".open_modal")
+    .querySelector(".open-modal")
     .addEventListener("click", function (e) {
       modal.open(e.srcElement.getAttribute('data-modal'));
     });
+
+  var formNote=document.querySelector("#send-note")
+  formNote.addEventListener("submit", function (e) {
+    e.preventDefault()
+    let sendNote=new Api(env.companyApi+env.noteEndpoint+'/insert',"newNoteSent")
+    let formData = new FormData(formNote);
+    let data = Object.fromEntries(formData.entries()); // Convert FormData entries to an object
+    data.siret=event.detail.siret
+    sendNote.post({body:JSON.stringify(data)})
+  });
+})
+
+
+document.addEventListener("companyDataUpdated", (event) => {
+  console.log(event)
 })
 
 document.addEventListener("datagouvEntreprises", (event) => {

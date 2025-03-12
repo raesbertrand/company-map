@@ -52,7 +52,7 @@
   <template id="company-card-template">
     <div class="title">
       <h1><i class="icon fa-regular fa-building"></i> <span class="nom_complet">!!Name</span></h1>
-      <button class="open_modal" data-modal="json-container" class="raw_data">Données brutes</button>
+      <button class="open-modal" data-modal="json-container" class="raw_data">Données brutes</button>
       <p><i class="fa-solid fa-location-dot"></i>
         <span class="matching_etablissements-adresse">!!full address</span></p>
     </div>
@@ -90,9 +90,9 @@
     <div id="notes">
       <h2>Notes</h2>
       <ul><li><i class="date">!!Date</i> <span class="note">!!note</span></li></ul>
-      <form>
-        <textarea></textarea>
-        <input type="button" value="Envoyer" />
+      <form id="send-note">
+        <textarea name="note"></textarea>
+        <input type="submit" value="Envoyer" />
       </form>
     </div>
   </template>
