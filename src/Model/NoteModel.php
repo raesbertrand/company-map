@@ -4,7 +4,7 @@ class NoteModel extends Database
 {
     public function getNotesForCompany($siret, $limit=10)
     {
-        return $this->select("SELECT * FROM company_notes WHERE siret=? ORDER BY created_at ASC LIMIT ?", ["si", $siret, $limit]);
+        return $this->select("SELECT * FROM company_notes WHERE siret=? ORDER BY created_at ASC LIMIT ?", ["ii", [$siret, $limit]]);
     }
 
     public function insertNote($siret, $note){

@@ -57,7 +57,8 @@ class NoteController extends BaseController
                 $siret=$arrQueryStringParams['number'];
                 if (isset($arrQueryStringParams['limit']) && $arrQueryStringParams['limit']) {
                     $intLimit = $arrQueryStringParams['limit'];
-                }
+                } 
+                
                 $arrNotes = $this->noteModel->getNotesForCompany($siret, $intLimit);
                 $responseData = json_encode($arrNotes);
             } catch (Error $e) {
