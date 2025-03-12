@@ -57,6 +57,12 @@ document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = ""
   createJsonViewer(event.detail, container)
   displayCompanyCard(event.detail)
+
+  document
+    .querySelector(".open_modal")
+    .addEventListener("click", function (e) {
+      modal.open(e.srcElement.getAttribute('data-modal'));
+    });
 })
 
 document.addEventListener("datagouvEntreprises", (event) => {
@@ -255,7 +261,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
       let loop = model.querySelectorAll('.loop_' + key);
       let looper = loop.length > 0 && loop[0].hasAttribute('data-template')
-      
+
       if (looper) {
         loop[0].textContent = ""
       }
@@ -288,12 +294,12 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
       let label = capitalizeFirstLetter(data[0].replaceAll('_', ' '))
       let node
       let labelNode
-      
-      let stdModel=model.querySelectorAll('.standard')
+
+      let stdModel = model.querySelectorAll('.standard')
       if (stdModel.length > 0) {
         node = model.querySelectorAll('.standard .value')
         labelNode = model.querySelectorAll('.standard .label')
-        
+
         stdModel[0].classList.remove('standard')
       }
       else {
@@ -368,8 +374,3 @@ map.on('zoomend, moveend', function (e) {
 });
 
 modal.init();
-document
-  .querySelector(".open_modal")
-  .addEventListener("click", function (e) {
-    modal.open(e.srcElement.getAttribute('data-modal'));
-  });
