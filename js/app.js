@@ -56,23 +56,32 @@ filtersForm.addEventListener('change', function (event) {
 document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = ""
   createJsonViewer(event.detail, container)
-  displayCompanyCard(event.detail)
 
-  document
-    .querySelector(".open-modal")
-    .addEventListener("click", function (e) {
-      modal.open(e.srcElement.getAttribute('data-modal'));
+  let companyNotes = new Api(env.companyApi + env.noteEndpoint + '/siret?', "getCompanyNotes")
+
+  companyNotes.get({'number': event.detail.siret}, function (data) {
+    event.details.company.notes=data
+    console.log(event)
+    displayCompanyCard(event.detail)
+
+    document
+      .querySelector(".open-modal")
+      .addEventListener("click", function (e) {
+        modal.open(e.srcElement.getAttribute('data-modal'));
+      });
+
+    var formNote = document.querySelector("#send-note")
+    formNote.addEventListener("submit", function (e) {
+      e.preventDefault()
+      let sendNote = new Api(env.companyApi + env.noteEndpoint + '/insert', "newNoteSent")
+      let formData = new FormData(formNote);
+
+      let data = Object.fromEntries(formData.entries()); // Convert FormData entries to an object
+      data.siret = event.detail.siret
+
+      sendNote.post({ body: JSON.stringify(data) })
     });
-
-  var formNote=document.querySelector("#send-note")
-  formNote.addEventListener("submit", function (e) {
-    e.preventDefault()
-    let sendNote=new Api(env.companyApi+env.noteEndpoint+'/insert',"newNoteSent")
-    let formData = new FormData(formNote);
-    let data = Object.fromEntries(formData.entries()); // Convert FormData entries to an object
-    data.siret=event.detail.siret
-    sendNote.post({body:JSON.stringify(data)})
-  });
+  })
 })
 
 
