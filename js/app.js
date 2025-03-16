@@ -56,13 +56,42 @@ filtersForm.addEventListener('change', function (event) {
 document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = ""
   createJsonViewer(event.detail, container)
-  displayCompanyCard(event.detail)
+
+  let companyNotes = new Api(env.companyApi + env.noteEndpoint + '/siret?', "getCompanyNotes")
+
+  companyNotes.get({'number': event.detail.siret}, function (data) {
+    event.detail.company.notes=data
+    displayCompanyCard(event.detail)
+
+    document
+      .querySelector(".open-modal")
+      .addEventListener("click", function (e) {
+        modal.open(e.srcElement.getAttribute('data-modal'));
+      });
+
+    var formNote = document.querySelector("#send-note")
+    formNote.addEventListener("submit", function (e) {
+      e.preventDefault()
+      postNote(formNote, event.detail.siret)
+    });
+  })
 })
+
 
 document.addEventListener("datagouvEntreprises", (event) => {
   let apiResult = event.detail
   feedMap(apiResult.results)
 })
+
+function postNote(formNote, siret){
+  let sendNote = new Api(env.companyApi + env.noteEndpoint + '/insert', "newNoteSent")
+  let formData = new FormData(formNote);
+
+  let data = Object.fromEntries(formData.entries()); // Convert FormData entries to an object
+  data.siret = siret
+
+  sendNote.post({ body: JSON.stringify(data) })
+}
 
 function feedMap(companies) {
   companies.forEach((company) => {
@@ -255,7 +284,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
       let loop = model.querySelectorAll('.loop_' + key);
       let looper = loop.length > 0 && loop[0].hasAttribute('data-template')
-      
+
       if (looper) {
         loop[0].textContent = ""
       }
@@ -288,12 +317,12 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
       let label = capitalizeFirstLetter(data[0].replaceAll('_', ' '))
       let node
       let labelNode
-      
-      let stdModel=model.querySelectorAll('.standard')
+
+      let stdModel = model.querySelectorAll('.standard')
       if (stdModel.length > 0) {
         node = model.querySelectorAll('.standard .value')
         labelNode = model.querySelectorAll('.standard .label')
-        
+
         stdModel[0].classList.remove('standard')
       }
       else {
@@ -303,7 +332,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
       if (node.length > 0) {
         node.forEach(function (v, k) {
-          v.textContent = displayValue(value)
+          v.textContent = displayValue(value, v)
         })
       }
 
@@ -318,7 +347,8 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 }
 
 
-function displayValue(data) {
+function displayValue(data, node=null) {
+
   var output;
   if (data === null) {
     return data
@@ -347,8 +377,13 @@ function displayValue(data) {
   }
 
   let testDate = DateTime.fromISO(data);
-  if (!testDate.invalid) {
-    output = testDate.toLocaleString(DateTime.DATE_FULL);
+  if (testDate.isValid) {
+    let format='DATE_FULL'
+    console.log(node)
+    if(node && node.getAttribute('data-dateformat')){
+      format=node.getAttribute('data-dateformat')
+    }
+    output = testDate.toLocaleString(DateTime[format]);
     return output
   }
   return output;
@@ -368,8 +403,3 @@ map.on('zoomend, moveend', function (e) {
 });
 
 modal.init();
-document
-  .querySelector(".open_modal")
-  .addEventListener("click", function (e) {
-    modal.open(e.srcElement.getAttribute('data-modal'));
-  });

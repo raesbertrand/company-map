@@ -1,10 +1,8 @@
 class Api {
-
     constructor(endPt, evt) {
         this.eventName = (evt) ? evt : "apiResponse";
-        this.data = {};
         this.endpointUrl = endPt;
-        this.parameters = null;
+        this.data = {};
         this.page = 1
 
         return new Proxy(this, {
@@ -26,7 +24,7 @@ class Api {
         if(typeof(vars)!="string"){
             urlVars=this.objToParams(vars)
         }
-        this.call(this.endpointUrl += urlVars, callback, all)
+        this.call(this.endpointUrl += urlVars, null, callback, all)
     }
 
     post(params, callback) {
@@ -36,17 +34,17 @@ class Api {
             method: "POST",
             mode: "cors"
         };
-        this.parameters = Object.assign({}, p, params);
-
-        this.call(callback)
+        let parameters = Object.assign({}, p, params);
+        
+        this.call(this.endpointUrl, parameters, callback)
     }
 
-    call(uri, callback, all) {
+    call(uri, params, callback, all) {
         this.page++;
         var obj = this;
         var urlCache
 
-        fetch(uri, this.parameters)
+        fetch(uri, params)
             .then(function (response) {
                 if (response.ok) {
                     urlCache = response.url;
@@ -57,7 +55,7 @@ class Api {
             })
             .then(function (d) {
                 if (callback) {
-                    callback();
+                    callback(d);
                 }
                 
                 Object.assign(obj.data, d)

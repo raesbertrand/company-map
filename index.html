@@ -35,15 +35,12 @@
     <form></form>
   </div>
   <div class="grid">
-    <!-- <div class="flex-row"> -->
       <div id="left-column">
         <div id="company-card"></div>
-        <button class="open_modal" data-modal="json-container">Données brutes</button>
       </div>
       <div id="right-column">
         <div id="map"></div>
       </div>
-    <!-- </div> -->
   </div>
   <div id="json-container" style="display: none"></div>
 
@@ -54,12 +51,20 @@
 
   <template id="company-card-template">
     <div class="title">
-      <i class="icon fa-regular fa-building"></i>
-      <h1 class="nom_complet">!!Name</h1>
+      <h1><i class="icon fa-regular fa-building"></i> <span class="nom_complet">!!Name</span></h1>
+      <button class="open-modal" data-modal="json-container" class="raw_data">Données brutes</button>
       <p><i class="fa-solid fa-location-dot"></i>
         <span class="matching_etablissements-adresse">!!full address</span></p>
     </div>
     <div class="card">
+      <div id="notes">
+        <h2>Notes</h2>
+        <ul class="loop_notes" data-template="list-notes"></ul>
+        <form id="send-note">
+          <textarea name="note"></textarea>
+          <input type="submit" value="Envoyer" />
+        </form>
+      </div>
       <p><span class="categorie_entreprise">!!category</span>, <span class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span> personnes travaillent à cette adresse qui existe depuis le <span class="matching_etablissements-date_creation">!!date création</span></p>
       <ul class="administrative">
         <li><i class="fa-solid fa-box-archive"></i> Siret : <span class="matching_etablissements-siret">!!Siret</span></li>
@@ -96,7 +101,10 @@
     <li class="item standard"><span class="label">!!label</span> : <span class="value">!!value</span></span></li>
   </template>
 
-  
+  <template id="list-notes">
+    <li class="item"><i class="notes-iso_date" data-dateformat="DATETIME_SHORT">!!Date</i> <span class="notes-note">!!note</span></li>
+  </template>
+
   <template id="list-dirigeants">
     <li class="item" title="" data-title="dirigeants-qualite"><span class="dirigeants-nom">!!nom</span> <span class="dirigeants-prenoms">!!prenoms</span></span></li>
   </template>

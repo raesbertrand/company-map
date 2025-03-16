@@ -16,8 +16,8 @@ class Company {
         });
     }
 
-    update(nouvellesDonnees) {
-        Object.assign(this.data, nouvellesDonnees);
+    update(newDatas) {
+        Object.assign(this.data, newDatas);
 
         // Émettre un événement personnalisé après mise à jour complète
         document.dispatchEvent(new CustomEvent("companyDataUpdated", {
