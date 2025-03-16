@@ -89,7 +89,7 @@
     </div>
     <div id="notes">
       <h2>Notes</h2>
-      <ul><li><i class="date">!!Date</i> <span class="note">!!note</span></li></ul>
+      <ul class="loop_notes" data-template="list-notes"></ul>
       <form id="send-note">
         <textarea name="note"></textarea>
         <input type="submit" value="Envoyer" />
@@ -101,7 +101,10 @@
     <li class="item standard"><span class="label">!!label</span> : <span class="value">!!value</span></span></li>
   </template>
 
-  
+  <template id="list-notes">
+    <li class="item"><i class="notes-created_at">!!Date</i> <span class="notes-note">!!note</span></li>
+  </template>
+
   <template id="list-dirigeants">
     <li class="item" title="" data-title="dirigeants-qualite"><span class="dirigeants-nom">!!nom</span> <span class="dirigeants-prenoms">!!prenoms</span></span></li>
   </template>

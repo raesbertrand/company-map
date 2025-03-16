@@ -72,13 +72,7 @@ document.addEventListener("companyDataUpdated", (event) => {
     var formNote = document.querySelector("#send-note")
     formNote.addEventListener("submit", function (e) {
       e.preventDefault()
-      let sendNote = new Api(env.companyApi + env.noteEndpoint + '/insert', "newNoteSent")
-      let formData = new FormData(formNote);
-
-      let data = Object.fromEntries(formData.entries()); // Convert FormData entries to an object
-      data.siret = event.detail.siret
-
-      sendNote.post({ body: JSON.stringify(data) })
+      postNote(formNote, event.detail.siret)
     });
   })
 })
@@ -88,6 +82,16 @@ document.addEventListener("datagouvEntreprises", (event) => {
   let apiResult = event.detail
   feedMap(apiResult.results)
 })
+
+function postNote(formNote, siret){
+  let sendNote = new Api(env.companyApi + env.noteEndpoint + '/insert', "newNoteSent")
+  let formData = new FormData(formNote);
+
+  let data = Object.fromEntries(formData.entries()); // Convert FormData entries to an object
+  data.siret = siret
+
+  sendNote.post({ body: JSON.stringify(data) })
+}
 
 function feedMap(companies) {
   companies.forEach((company) => {
