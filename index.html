@@ -57,6 +57,14 @@
         <span class="matching_etablissements-adresse">!!full address</span></p>
     </div>
     <div class="card">
+      <div id="notes">
+        <h2>Notes</h2>
+        <ul class="loop_notes" data-template="list-notes"></ul>
+        <form id="send-note">
+          <textarea name="note"></textarea>
+          <input type="submit" value="Envoyer" />
+        </form>
+      </div>
       <p><span class="categorie_entreprise">!!category</span>, <span class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span> personnes travaillent à cette adresse qui existe depuis le <span class="matching_etablissements-date_creation">!!date création</span></p>
       <ul class="administrative">
         <li><i class="fa-solid fa-box-archive"></i> Siret : <span class="matching_etablissements-siret">!!Siret</span></li>
@@ -87,14 +95,6 @@
       <!-- TODO : add node complements -->
       <!-- TODO : link to  https://annuaire-entreprises.data.gouv.fr/etablissement/[[siret]] -->
     </div>
-    <div id="notes">
-      <h2>Notes</h2>
-      <ul class="loop_notes" data-template="list-notes"></ul>
-      <form id="send-note">
-        <textarea name="note"></textarea>
-        <input type="submit" value="Envoyer" />
-      </form>
-    </div>
   </template>
 
   <template id="list-template">
@@ -102,7 +102,7 @@
   </template>
 
   <template id="list-notes">
-    <li class="item"><i class="notes-created_at">!!Date</i> <span class="notes-note">!!note</span></li>
+    <li class="item"><i class="notes-iso_date" data-dateformat="DATETIME_SHORT">!!Date</i> <span class="notes-note">!!note</span></li>
   </template>
 
   <template id="list-dirigeants">

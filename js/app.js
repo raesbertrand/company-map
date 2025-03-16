@@ -332,7 +332,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 
       if (node.length > 0) {
         node.forEach(function (v, k) {
-          v.textContent = displayValue(value)
+          v.textContent = displayValue(value, v)
         })
       }
 
@@ -347,7 +347,8 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
 }
 
 
-function displayValue(data) {
+function displayValue(data, node=null) {
+
   var output;
   if (data === null) {
     return data
@@ -376,8 +377,13 @@ function displayValue(data) {
   }
 
   let testDate = DateTime.fromISO(data);
-  if (!testDate.invalid) {
-    output = testDate.toLocaleString(DateTime.DATE_FULL);
+  if (testDate.isValid) {
+    let format='DATE_FULL'
+    console.log(node)
+    if(node && node.getAttribute('data-dateformat')){
+      format=node.getAttribute('data-dateformat')
+    }
+    output = testDate.toLocaleString(DateTime[format]);
     return output
   }
   return output;
