@@ -22,10 +22,8 @@ class Api {
     get(vars, callback, all) {
         let urlVars=vars;
         if(typeof(vars)!="string"){
-            console.log('ok')
             urlVars=this.objToParams(vars)
         }
-        console.log(urlVars)
         this.call(this.endpointUrl += urlVars, null, callback, all)
     }
 
@@ -57,7 +55,7 @@ class Api {
             })
             .then(function (d) {
                 if (callback) {
-                    callback();
+                    callback(d);
                 }
                 
                 Object.assign(obj.data, d)

@@ -60,8 +60,7 @@ document.addEventListener("companyDataUpdated", (event) => {
   let companyNotes = new Api(env.companyApi + env.noteEndpoint + '/siret?', "getCompanyNotes")
 
   companyNotes.get({'number': event.detail.siret}, function (data) {
-    event.details.company.notes=data
-    console.log(event)
+    event.detail.company.notes=data
     displayCompanyCard(event.detail)
 
     document
@@ -84,10 +83,6 @@ document.addEventListener("companyDataUpdated", (event) => {
   })
 })
 
-
-document.addEventListener("companyDataUpdated", (event) => {
-  console.log(event)
-})
 
 document.addEventListener("datagouvEntreprises", (event) => {
   let apiResult = event.detail
