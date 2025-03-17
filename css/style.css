@@ -34,10 +34,6 @@ h2{
     font-size: 1.2em;
 }
 
-.matching_etablissements-adresse{
-    font-size: 0.9em;
-}
-
 #map {
     height: 580px;
 }
@@ -47,20 +43,40 @@ h2{
     grid-template-columns: 1fr 3fr;
 }
 
+.raw_data{
+    display: none;
+}
+
+.icon{
+    opacity:0.5;
+}
+
+.matching_etablissements-adresse{
+    font-size: 0.9em;
+}
+
 #company-card > * {
     padding:5px 10px;
 }
 
 #company-card .title {
-    background: var(--lighter-grey-color);
+    background: var(--blue-color);
+    color:#fff;
     border-bottom: 1px solid var(--green-color)
+}
+
+#company-card .title h1{
+    color: #fff;
 }
 
 #company-card .title .icon, 
 #company-card .title .name{
     display: inline;
-    color:var(--blue-color);
+    color:#fff
+}
 
+#company-card .title .icon{
+    font-size: 1.15rem;
 }
 
 #filters{
