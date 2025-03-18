@@ -17,7 +17,11 @@ body {
     margin: 0
 }
 
-/* titlas */
+html, body {
+    height: 100%;
+}
+
+/* titles */
 h1,
 h2,
 h3,
