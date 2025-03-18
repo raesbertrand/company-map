@@ -32,21 +32,24 @@
 
 <body>
   <div id="filters">
-    <form></form>
+    <h2><a href="#" data-display="#form-filters"><i class="icon fa-solid fa-filter"></i><span class="title">Filtres</span></a></h2>
+    <form id="form-filters"></form>
   </div>
   <div class="grid">
-      <div id="left-column">
-        <div id="company-card"></div>
-      </div>
-      <div id="right-column">
-        <div id="map"></div>
-      </div>
+    <!-- <div id="left-column"> -->
+      <div id="company-card"></div>
+    <!-- </div>
+    <div id="right-column"> -->
+      <div id="map"></div>
+    <!-- </div> -->
   </div>
   <div id="json-container" style="display: none"></div>
 
   <template id="bool-filter">
-    <input type="checkbox" name="est_bio" />
-    <label for="est_bio">Bio</label>
+    <span class="check-group">
+      <input type="checkbox" name="est_bio" />
+      <label for="est_bio">Bio</label>
+    </span>
   </template>
 
   <template id="company-card-template">
@@ -54,7 +57,8 @@
       <h1><i class="icon fa-regular fa-building"></i> <span class="nom_complet">!!Name</span></h1>
       <button class="open-modal raw_data" data-modal="json-container">Données brutes</button>
       <p><i class="icon fa-solid fa-location-dot"></i>
-        <span class="matching_etablissements-adresse">!!full address</span></p>
+        <span class="matching_etablissements-adresse">!!full address</span>
+      </p>
     </div>
     <div class="card">
       <div id="notes">
@@ -65,10 +69,15 @@
           <button type="submit" class="material-bubble"><i class="fa-solid fa-paper-plane"></i> Envoyer</button>
         </form>
       </div>
-      <p><span class="categorie_entreprise">!!category</span>, <span class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span> personnes travaillent à cette adresse qui existe depuis le <span class="matching_etablissements-date_creation">!!date création</span></p>
+      <p><span class="categorie_entreprise">!!category</span>, <span
+          class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span> personnes travaillent à cette
+        adresse qui existe depuis le <span class="matching_etablissements-date_creation">!!date création</span></p>
       <ul class="administrative">
-        <li><i class="fa-solid fa-box-archive"></i> Siret : <span class="matching_etablissements-siret">!!Siret</span></li>
-        <li><i class="fa-solid fa-user-tie"></i>Dirigeants : <ul class="loop_dirigeants" data-template="list-dirigeants">!!Dirigeants</ul></li>
+        <li><i class="fa-solid fa-box-archive"></i> Siret : <span class="matching_etablissements-siret">!!Siret</span>
+        </li>
+        <li><i class="fa-solid fa-user-tie"></i>Dirigeants : <ul class="loop_dirigeants"
+            data-template="list-dirigeants">!!Dirigeants</ul>
+        </li>
         <li>Catégorie : <span class="categorie_entreprise">!!category</span></li>
       </ul>
       <div id="details">
@@ -83,18 +92,21 @@
         <h2>Entreprise</h2>
         <ul>
           <li>Activité principale : <span class="activite_principale">!!activité principale</span></li>
-          <li><span class="nature_juridique--label">!!label nature juridique</span> : <span class="nature_juridique">!!nature juridique</span></li>
-          <li><span class="section_activite_principale--label">!!label section_activite_principale</span> : <span class="section_activite_principale">!!section_activite_principale</span></li>
-          <li><span class="statut_diffusion--label">!!label statut_diffusion</span> : <span class="statut_diffusion">!!statut_diffusion</span></li>
+          <li><span class="nature_juridique--label">!!label nature juridique</span> : <span
+              class="nature_juridique">!!nature juridique</span></li>
+          <li><span class="section_activite_principale--label">!!label section_activite_principale</span> : <span
+              class="section_activite_principale">!!section_activite_principale</span></li>
+          <li><span class="statut_diffusion--label">!!label statut_diffusion</span> : <span
+              class="statut_diffusion">!!statut_diffusion</span></li>
         </ul>
       </div>
       <div class="complements">
         <h2>Compléments</h2>
-      <ul class="loop_complements" data-template="list-template">!!Complements</ul>
-      <!-- TODO : add node finances -->
-      <!-- TODO : add node complements -->
-      <!-- TODO : link to  https://annuaire-entreprises.data.gouv.fr/etablissement/[[siret]] -->
-    </div>
+        <ul class="loop_complements" data-template="list-template">!!Complements</ul>
+        <!-- TODO : add node finances -->
+        <!-- TODO : add node complements -->
+        <!-- TODO : link to  https://annuaire-entreprises.data.gouv.fr/etablissement/[[siret]] -->
+      </div>
   </template>
 
   <template id="list-template">
@@ -102,11 +114,13 @@
   </template>
 
   <template id="list-notes">
-    <li class="item"><i class="notes-iso_date" data-dateformat="DATETIME_SHORT">!!Date</i> <span class="notes-note">!!note</span></li>
+    <li class="item"><i class="notes-iso_date" data-dateformat="DATETIME_SHORT">!!Date</i> <span
+        class="notes-note">!!note</span></li>
   </template>
 
   <template id="list-dirigeants">
-    <li class="item" title="" data-title="dirigeants-qualite"><span class="dirigeants-nom">!!nom</span> <span class="dirigeants-prenoms">!!prenoms</span></span></li>
+    <li class="item" title="" data-title="dirigeants-qualite"><span class="dirigeants-nom">!!nom</span> <span
+        class="dirigeants-prenoms">!!prenoms</span></span></li>
   </template>
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
