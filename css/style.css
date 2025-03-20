@@ -17,7 +17,8 @@ body {
     margin: 0
 }
 
-html, body {
+html,
+body {
     height: 100%;
 }
 
@@ -152,8 +153,8 @@ input {
     margin-right: 4px
 }
 
-.fa-calendar-check{
-    margin-left:3px;
+.fa-calendar-check {
+    margin-left: 3px;
     margin-right: 7px;
 }
 
@@ -164,9 +165,19 @@ input {
 /*
 main panel : company infos
 */
-#company-card{
-    border-bottom:1px solid var(--blue-color);
+
+.close {
+    float: right;
+    display: inline-block;
+    padding: 10px;
+    font-size: 24px;
+    color: #fff;
 }
+
+#company-card .card {
+    border-bottom: 1px solid var(--blue-color);
+}
+
 #company-card>* {
     padding: 5px 10px;
 }
@@ -220,33 +231,39 @@ main panel : company infos
     margin: 5px 0;
 }
 
-#details ul, #details li,
-#entreprise ul, #entreprise li,
-#complements ul, #complements li 
-{
+#details ul,
+#details li,
+#entreprise ul,
+#entreprise li,
+#complements ul,
+#complements li {
     list-style: none;
     padding: 0;
     margin: 0;
 }
 
-#details li, #entreprise li{
+#details li,
+#entreprise li {
     padding: 6px;
 }
 
-#details .icon, 
-#entreprise .icon{
-    color:var(--green-color);
+#details .icon,
+#entreprise .icon {
+    color: var(--green-color);
     opacity: 1;
 }
 
-#entreprise ul ul, #entreprise ul ul li,
-#complements ul ul, #complements ul ul li{
+#entreprise ul ul,
+#entreprise ul ul li,
+#complements ul ul,
+#complements ul ul li {
     list-style: disc;
     padding: 0 3px;
     font-size: 0.95em;
 }
+
 #entreprise ul ul,
-#complements ul ul{
+#complements ul ul {
     margin: 5px 0 0 25px;
 }
 
@@ -284,6 +301,10 @@ main panel : company infos
     .grid {
         display: grid;
         grid-template-columns: 1fr 3fr;
+    }
+
+    #company-card .card {
+        border-bottom: 0;
     }
 
 }

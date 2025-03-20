@@ -59,14 +59,20 @@ document.addEventListener("companyDataUpdated", (event) => {
 
   let companyNotes = new Api(env.companyApi + env.noteEndpoint + '/siret?', "getCompanyNotes")
 
-  companyNotes.get({'number': event.detail.siret}, function (data) {
-    event.detail.company.notes=data
+  companyNotes.get({ 'number': event.detail.siret }, function (data) {
+    event.detail.company.notes = data
     displayCompanyCard(event.detail)
 
     document
       .querySelector(".open-modal")
       .addEventListener("click", function (e) {
         modal.open(e.srcElement.getAttribute('data-modal'));
+      });
+
+    document
+      .querySelector(".close")
+      .addEventListener("click", function (e) {
+        closeCompanyCard()
       });
 
     var formNote = document.querySelector("#send-note")
@@ -78,12 +84,12 @@ document.addEventListener("companyDataUpdated", (event) => {
 })
 
 document
-      .querySelector("[data-display]")
-      .addEventListener("click", function (e) {
-        e.preventDefault()
-        let element=document.querySelector(this.getAttribute('data-display'))
-        element.style.display=isVisible(element)?'none':'block'
-      });
+  .querySelector("[data-display]")
+  .addEventListener("click", function (e) {
+    e.preventDefault()
+    let element = document.querySelector(this.getAttribute('data-display'))
+    element.style.display = isVisible(element) ? 'none' : 'block'
+  });
 
 
 document.addEventListener("datagouvEntreprises", (event) => {
@@ -91,7 +97,7 @@ document.addEventListener("datagouvEntreprises", (event) => {
   feedMap(apiResult.results)
 })
 
-function postNote(formNote, siret){
+function postNote(formNote, siret) {
   let sendNote = new Api(env.companyApi + env.noteEndpoint + '/insert', "newNoteSent")
   let formData = new FormData(formNote);
 
@@ -254,6 +260,11 @@ function displayCompanyCard(markerDatas) {
   target.appendChild(clone);
 }
 
+
+function closeCompanyCard(){
+  var target = document.querySelector("#company-card").textContent=""
+}
+
 function capitalizeFirstLetter(str) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
@@ -354,7 +365,7 @@ function insertVarTemplate(unicId, datas, model, parent, specific) {
   });
 }
 
-function displayValue(data, node=null) {
+function displayValue(data, node = null) {
 
   var output;
   if (data === null) {
@@ -385,9 +396,9 @@ function displayValue(data, node=null) {
 
   let testDate = DateTime.fromISO(data);
   if (testDate.isValid) {
-    let format='DATE_FULL'
-    if(node && node.getAttribute('data-dateformat')){
-      format=node.getAttribute('data-dateformat')
+    let format = 'DATE_FULL'
+    if (node && node.getAttribute('data-dateformat')) {
+      format = node.getAttribute('data-dateformat')
     }
     output = testDate.toLocaleString(DateTime[format]);
     return output
