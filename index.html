@@ -31,17 +31,18 @@
 </head>
 
 <body>
-  <div id="filters">
-    <h2><a href="#" data-display="#form-filters"><i class="icon fa-solid fa-filter"></i><span class="title">Filtres</span></a></h2>
-    <form id="form-filters"></form>
-  </div>
   <div class="grid">
-    <!-- <div id="left-column"> -->
+    <div id="left-column">
       <div id="company-card"></div>
-    <!-- </div>
-    <div id="right-column"> -->
+    </div>
+    <div id="right-column">
+      <div id="filters">
+        <h2><a href="#" data-display="#form-filters"><i class="icon fa-solid fa-filter"></i><span
+              class="title">Filtres</span></a></h2>
+        <form id="form-filters"></form>
+      </div>
       <div id="map"></div>
-    <!-- </div> -->
+    </div>
   </div>
   <div id="json-container" style="display: none"></div>
 
@@ -72,25 +73,29 @@
       <p><span class="categorie_entreprise">!!category</span>, <span
           class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span> personnes travaillent à cette
         adresse qui existe depuis le <span class="matching_etablissements-date_creation">!!date création</span></p>
-      <ul class="administrative">
-        <li><i class="fa-solid fa-box-archive"></i> Siret : <span class="matching_etablissements-siret">!!Siret</span>
-        </li>
-        <li><i class="fa-solid fa-user-tie"></i>Dirigeants : <ul class="loop_dirigeants"
-            data-template="list-dirigeants">!!Dirigeants</ul>
-        </li>
-        <li>Catégorie : <span class="categorie_entreprise">!!category</span></li>
-      </ul>
       <div id="details">
-        <h2>Détails</h2>
+        <h2>Adresse</h2>
         <ul>
-          <li>Créé le <span class="matching_etablissements-date_creation">!!date création</span></li>
-          <li>Effectif : <span class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span></li>
-          <li>Siège de l'entreprise : <span class="matching_etablissements-est_siege">!!Siege</span></li>
+          <li><i class="icon fa-solid fa-calendar-check"></i> Créée le <span
+              class="matching_etablissements-date_creation">!!date création</span></li>
+          <li><i class="icon fa-solid fa-people-group"></i> Effectif : <span
+              class="matching_etablissements-tranche_effectif_salarie">!!Effectif</span></li>
+          <li><i class="icon fa-solid fa-building-user"></i> Siège de l'entreprise : <span
+              class="matching_etablissements-est_siege">!!Siege</span></li>
         </ul>
       </div>
-      <div class="entreprise">
+      <div id="entreprise">
         <h2>Entreprise</h2>
+        <ul class="details">
+          <li><i class="icon fa-solid fa-box-archive"></i> Siret : <span
+              class="matching_etablissements-siret">!!Siret</span>
+          </li>
+          <li><i class="icon fa-solid fa-user-tie"></i>Dirigeants : <ul class="loop_dirigeants"
+              data-template="list-dirigeants">!!Dirigeants</ul>
+          </li>
+        </ul>
         <ul>
+          <li>Catégorie : <span class="categorie_entreprise">!!category</span></li>
           <li>Activité principale : <span class="activite_principale">!!activité principale</span></li>
           <li><span class="nature_juridique--label">!!label nature juridique</span> : <span
               class="nature_juridique">!!nature juridique</span></li>
@@ -100,7 +105,7 @@
               class="statut_diffusion">!!statut_diffusion</span></li>
         </ul>
       </div>
-      <div class="complements">
+      <div id="complements">
         <h2>Compléments</h2>
         <ul class="loop_complements" data-template="list-template">!!Complements</ul>
         <!-- TODO : add node finances -->

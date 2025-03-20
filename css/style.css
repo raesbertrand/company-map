@@ -152,6 +152,11 @@ input {
     margin-right: 4px
 }
 
+.fa-calendar-check{
+    margin-left:3px;
+    margin-right: 7px;
+}
+
 .matching_etablissements-adresse {
     font-size: 0.9em;
 }
@@ -159,7 +164,9 @@ input {
 /*
 main panel : company infos
 */
-
+#company-card{
+    border-bottom:1px solid var(--blue-color);
+}
 #company-card>* {
     padding: 5px 10px;
 }
@@ -211,6 +218,36 @@ main panel : company infos
     margin-bottom: 5px;
     resize: vertical;
     margin: 5px 0;
+}
+
+#details ul, #details li,
+#entreprise ul, #entreprise li,
+#complements ul, #complements li 
+{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+#details li, #entreprise li{
+    padding: 6px;
+}
+
+#details .icon, 
+#entreprise .icon{
+    color:var(--green-color);
+    opacity: 1;
+}
+
+#entreprise ul ul, #entreprise ul ul li,
+#complements ul ul, #complements ul ul li{
+    list-style: disc;
+    padding: 0 3px;
+    font-size: 0.95em;
+}
+#entreprise ul ul,
+#complements ul ul{
+    margin: 5px 0 0 25px;
 }
 
 
