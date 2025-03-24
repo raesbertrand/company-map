@@ -1,3 +1,4 @@
+const tools=new Tools()
 
 const companyApi = new Api(env.endpoint, "datagouvEntreprises")
 const selectedCompany = new Company();
@@ -35,7 +36,7 @@ injectFilters()
 var geoJsonLayer = L.geoJSON(pointsCollection,
   {
     onEachFeature: onEachFeature,
-    filter: geoJsonfilter
+    filter: tools.geoJsonfilter
   }
 )
 
@@ -55,7 +56,7 @@ filtersForm.addEventListener('change', function (event) {
 
 document.addEventListener("companyDataUpdated", (event) => {
   container.textContent = ""
-  createJsonViewer(event.detail, container)
+  tools.createJsonViewer(event.detail, container)
 
   let companyNotes = new Api(env.companyApi + env.noteEndpoint + '/siret?', "getCompanyNotes")
 
@@ -88,7 +89,7 @@ document
   .addEventListener("click", function (e) {
     e.preventDefault()
     let element = document.querySelector(this.getAttribute('data-display'))
-    element.style.display = isVisible(element) ? 'none' : 'block'
+    element.style.display = tools.isVisible(element) ? 'none' : 'block'
   });
 
 
@@ -130,7 +131,6 @@ function addPoint(feature) {
 
   markers.addLayer(geoJsonLayer)
     .addTo(map)
-
 }
 
 function onEachFeature(feature, layer) {
@@ -148,7 +148,7 @@ function injectFilters() {
     let clone = document.importNode(template.content, true);
 
     let value = filters[key]
-    let label = capitalizeFirstLetter(key.replaceAll('est_', '').replaceAll('_', ' '))
+    let label = tools.capitalizeFirstLetter(key.replaceAll('est_', '').replaceAll('_', ' '))
 
     let labelNode = clone.querySelector('label')
     labelNode.setAttribute("for", key)
@@ -163,91 +163,6 @@ function injectFilters() {
   }
 }
 
-
-function geoJsonfilter(feature) {
-  var datas = feature.properties
-  var noFilter = true
-
-  for (let key in filters) {
-    if (filters[key] !== false) {
-      noFilter = false
-      break
-    }
-  }
-
-  if (noFilter == true) {
-    return true
-  }
-
-  for (let key in filters) {
-    if (filters[key] == true) {
-      var search = searchJSON(datas, key, filters[key])
-      if (search.length > 0) {
-        return true
-      }
-
-    }
-  }
-
-  return false
-}
-
-function searchJSON(obj, key, val) {
-  let results = [];
-  for (let k in obj) {
-    if (obj.hasOwnProperty(k)) {
-      if (k === key && obj[k] === val) {
-        results.push(obj);
-      } else if (typeof obj[k] === "object") {
-        results = results.concat(searchJSON(obj[k], key, val));
-      }
-    }
-  }
-  return results;
-}
-
-function createJsonViewer(json, container) {
-  function createElement(tag, className, text) {
-    const el = document.createElement(tag)
-    if (className) el.className = className
-    if (text) el.textContent = text
-    return el
-  }
-
-  function createTree(obj, parent) {
-    const ul = createElement("ul", "json-tree")
-    parent.appendChild(ul)
-
-    Object.entries(obj).forEach(([key, value]) => {
-      // if (value === false || value === null) return // Ne pas afficher les valeurs false et null
-
-      const li = createElement("li", "json-node")
-      const keySpan = createElement("span", "json-key", key + ": ")
-      li.appendChild(keySpan)
-
-      if (typeof value === "object" && value !== null) {
-        keySpan.classList.add("json-expandable")
-        const subContainer = createElement("div", "json-subtree")
-        li.appendChild(subContainer)
-        keySpan.addEventListener("click", () => {
-          subContainer.classList.toggle("hidden")
-        })
-        createTree(value, subContainer)
-      } else {
-        const valueSpan = createElement(
-          "span",
-          "json-value",
-          JSON.stringify(value),
-        )
-        li.appendChild(valueSpan)
-      }
-      ul.appendChild(li)
-    })
-  }
-
-  createTree(json, container)
-}
-
 function displayCompanyCard(markerDatas) {
   var target = document.querySelector("#company-card")
   var siret = markerDatas['siret'];
@@ -255,8 +170,7 @@ function displayCompanyCard(markerDatas) {
   target.textContent = ""
   var template = document.querySelector("#company-card-template");
   var clone = document.importNode(template.content, true);
-  insertVarTemplate(["siret", siret], companyDetails, clone)
-
+  tools.insertVarTemplate(["siret", siret], companyDetails, clone)
   target.appendChild(clone);
 }
 
@@ -264,162 +178,6 @@ function displayCompanyCard(markerDatas) {
 function closeCompanyCard(){
   var target = document.querySelector("#company-card").textContent=""
 }
-
-function capitalizeFirstLetter(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-}
-
-function insertVarTemplate(unicId, datas, model, parent, specific) {
-  // unicId must be an array. Index 0 define the key of an object, index 1 define a value. If a node contains this key with a different value, the node is ignore. 
-  // The goal is to ignore unrelevant buildings of the company as the user click on a single building but the data list all of them.
-  Object.entries(datas).forEach((data) => {
-    let key = ''
-    if (!parent) {
-      key = data[0]
-    }
-    else {
-      key = parent + "-" + data[0]
-    }
-
-    let value = data[1];
-
-    if (data[unicId[0]] && data[0] != unicId[0] && data[unicId[0]] != unicId[1]) {
-      // Do not parse object if the collection is locked with a specific index
-      return
-    }
-
-    if (typeof (value) == "object" && value != null) {
-      //process subobject
-      let collec
-      let type
-      if (value[0]) {
-        collec = value
-        type = 'array'
-      }
-      else {
-        collec = Object.entries(value)
-        type = 'json'
-      }
-
-      let loop = model.querySelectorAll('.loop_' + key);
-      let looper = loop.length > 0 && loop[0].hasAttribute('data-template')
-
-      if (looper) {
-        loop[0].textContent = ""
-      }
-      collec.forEach(function (d, i) {
-        if (looper) {
-          let disp = null
-          if (type == 'array') {
-            disp = d
-          }
-          else if (d[1]) {
-            disp = {}
-            disp[d[0]] = d[1]
-          }
-
-          if (disp) {
-            let tpl = document.querySelector("#" + loop[0].getAttribute('data-template'));
-            let submodel = document.importNode(tpl.content, true);
-
-            insertVarTemplate(unicId, disp, submodel, key)
-            loop[0].appendChild(submodel);
-          }
-        }
-        else {
-          insertVarTemplate(unicId, d, model, key)
-        }
-      })
-    }
-    else {
-      //insert data
-      let label = capitalizeFirstLetter(data[0].replaceAll('_', ' '))
-      let node
-      let labelNode
-
-      let stdModel = model.querySelectorAll('.standard')
-      if (stdModel.length > 0) {
-        node = model.querySelectorAll('.standard .value')
-        labelNode = model.querySelectorAll('.standard .label')
-
-        stdModel[0].classList.remove('standard')
-      }
-      else {
-        node = model.querySelectorAll('.' + key)
-        labelNode = model.querySelectorAll('.' + key + '--label')
-      }
-
-      if (node.length > 0) {
-        node.forEach(function (v, k) {
-          v.textContent = displayValue(value, v)
-        })
-      }
-
-      if (labelNode.length > 0) {
-        labelNode.forEach(function (v, k) {
-          v.textContent = label
-        })
-      }
-
-    }
-  });
-}
-
-function displayValue(data, node = null) {
-
-  var output;
-  if (data === null) {
-    return data
-  }
-
-  switch (data) {
-    case 'true':
-    case true:
-      output = "oui";
-      break;
-    case 'false':
-    case false:
-      output = "non";
-      break;
-    default:
-      output = data
-  }
-  if (output != data) {
-    return output
-  }
-
-  let testNumber = Number(data)
-  if (typeof testNumber == 'number' && !isNaN(testNumber)) {
-    output = testNumber
-    return output;
-  }
-
-  let testDate = DateTime.fromISO(data);
-  if (testDate.isValid) {
-    let format = 'DATE_FULL'
-    if (node && node.getAttribute('data-dateformat')) {
-      format = node.getAttribute('data-dateformat')
-    }
-    output = testDate.toLocaleString(DateTime[format]);
-    return output
-  }
-  return output;
-}
-
-function isVisible(element) {
-  if (!element) return false;
-  const style = getComputedStyle(element);
-  if (style.display === 'none') return false;
-  if (style.visibility !== 'visible') return false;
-  if (style.opacity < 0.1) return false;
-  const boundingRect = element.getBoundingClientRect();
-  if (boundingRect.width <= 0 || boundingRect.height <= 0) return false;
-  const viewportWidth = window.innerWidth || document.documentElement.clientWidth;
-  const viewportHeight = window.innerHeight || document.documentElement.clientHeight;
-  if (boundingRect.top > viewportHeight || boundingRect.left > viewportWidth) return false;
-  return true;
-}
-
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
