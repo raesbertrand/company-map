@@ -300,18 +300,22 @@ main panel : company infos
 Loader
 */
 #companies-loader{
-    font-size: 0.8em;
+    font-size: 0.75em;
     color:lighten(var(--blue-color),50%);
+    white-space: nowrap;
+    padding-top: 5px;
 }
 
-#companies-loader .loaded{
-    margin:0 15px;
+#companies-loader span.percent{
+    font-size: 0.8em;
+    margin-right: 15px;
 }
 
 progress{
     border-radius:0px;
-    height: 5px;
+    height: 2px;
     margin-bottom: 4px;
+    width:40px;
 }
 progress::-webkit-progress-bar {
     background-color: var(--lighter-grey-color);
@@ -325,6 +329,16 @@ progress::-webkit-progress-value {
     .grid {
         display: grid;
         grid-template-columns: 1fr 3fr;
+    }
+
+    #filters{
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #companies-loader{
+        padding: 0;
     }
 
     #company-card .card {
