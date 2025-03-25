@@ -296,6 +296,30 @@ main panel : company infos
     cursor: pointer;
 }
 
+/*
+Loader
+*/
+#companies-loader{
+    font-size: 0.8em;
+    color:lighten(var(--blue-color),50%);
+}
+
+#companies-loader .loaded{
+    margin:0 15px;
+}
+
+progress{
+    border-radius:0px;
+    height: 5px;
+    margin-bottom: 4px;
+}
+progress::-webkit-progress-bar {
+    background-color: var(--lighter-grey-color);
+}
+progress::-webkit-progress-value {
+    background-color: var(--green-color);
+}
+
 @media screen and (min-width: 780px) {
 
     .grid {

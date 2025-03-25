@@ -1,4 +1,4 @@
-const tools=new Tools()
+const tools = new Tools()
 
 const companyApi = new Api(env.endpoint, "datagouvEntreprises")
 const selectedCompany = new Company();
@@ -95,8 +95,25 @@ document
 
 document.addEventListener("datagouvEntreprises", (event) => {
   let apiResult = event.detail
+  loadbar(apiResult.page, apiResult.total_pages)
   feedMap(apiResult.results)
 })
+
+function loadbar(progress, total) {
+  let percent = (progress * 100) / total
+  let displayPercent = document.querySelectorAll(".percent")
+  let progressBar = document.querySelector("progress")
+
+  if (displayPercent.length > 0) {
+    displayPercent.forEach(function (v, k) {
+      v.textContent = Math.round(percent) + "%"
+    })
+  }
+
+  if (progressBar) {
+    progressBar.setAttribute("value", percent)
+  }
+}
 
 function postNote(formNote, siret) {
   let sendNote = new Api(env.companyApi + env.noteEndpoint + '/insert', "newNoteSent")
@@ -120,6 +137,14 @@ function feedMap(companies) {
 
           collection.addFeature(feature)
           addPoint(feature)
+
+          let count = document.querySelectorAll('.total_markers')
+          if (count.length > 0) {
+            count.forEach(function (v, k) {
+              console.log(collection.featureCollection)
+              v.textContent = collection.featureCollection.features.length
+            })
+          }
         }
       })
     }
@@ -175,8 +200,8 @@ function displayCompanyCard(markerDatas) {
 }
 
 
-function closeCompanyCard(){
-  var target = document.querySelector("#company-card").textContent=""
+function closeCompanyCard() {
+  var target = document.querySelector("#company-card").textContent = ""
 }
 
 L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
