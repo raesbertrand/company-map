@@ -115,6 +115,20 @@ function loadbar(progress, total) {
   }
 }
 
+function countVisibleMarkers(map) {
+  var bounds = map.getBounds();
+  var count = 0;
+
+  console.log(bounds)
+
+  map.eachLayer(function(layer) {
+      if (layer instanceof L.Marker) {
+          if (bounds.contains(layer.getLatLng())) count++;
+       }
+  });
+  return count;
+}
+
 function postNote(formNote, siret) {
   let sendNote = new Api(env.companyApi + env.noteEndpoint + '/insert', "newNoteSent")
   let formData = new FormData(formNote);
@@ -141,7 +155,6 @@ function feedMap(companies) {
           let count = document.querySelectorAll('.total_markers')
           if (count.length > 0) {
             count.forEach(function (v, k) {
-              console.log(collection.featureCollection)
               v.textContent = collection.featureCollection.features.length
             })
           }
@@ -156,6 +169,14 @@ function addPoint(feature) {
 
   markers.addLayer(geoJsonLayer)
     .addTo(map)
+
+  let displayed=countVisibleMarkers(markers)
+  let count=document.querySelectorAll('.visible_markers')
+  if(count.length>0){
+    count.forEach(function (v, k) {
+      v.textContent = displayed
+    })
+  }
 }
 
 function onEachFeature(feature, layer) {
