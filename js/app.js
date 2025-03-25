@@ -1,5 +1,7 @@
 const tools = new Tools()
 
+const tools = new Tools()
+
 const companyApi = new Api(env.endpoint, "datagouvEntreprises")
 const selectedCompany = new Company();
 const container = document.getElementById("json-container")
@@ -17,7 +19,6 @@ let filtersForm = document.querySelector('#filters form');
 var filters = {
   "est_association": false,
   "est_bio": false,
-  "est_entrepreneur_individuel": false,
   "est_entrepreneur_spectacle": false,
   "est_ess": false,
   "est_finess": false,
@@ -136,7 +137,7 @@ function feedMap(companies) {
   companies.forEach((company) => {
     if (company.date_fermeture == null) {
       company.matching_etablissements.forEach((etablissement) => {
-        if (etablissement.date_fermeture == null
+        if (etablissement.date_fermeture == null && est_entrepreneur_individuel!=true
           && !collection.searchId(etablissement.siret)
         ) {
           let converter = new GeoJsonConverter()
