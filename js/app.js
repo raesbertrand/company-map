@@ -1,7 +1,5 @@
 const tools = new Tools()
 
-const tools = new Tools()
-
 const companyApi = new Api(env.endpoint, "datagouvEntreprises")
 const selectedCompany = new Company();
 const container = document.getElementById("json-container")
