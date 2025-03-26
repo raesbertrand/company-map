@@ -133,7 +133,7 @@ function postNote(formNote, siret) {
 
 function feedMap(companies) {
   companies.forEach((company) => {
-    if (company.date_fermeture == null && company.complements.est_entrepreneur_individuel != true) {
+    if (company.date_fermeture == null && company.complements.est_entrepreneur_individuel != true && company.nature_juridique!=6540) {
       company.matching_etablissements.forEach((etablissement) => {
         if (etablissement.date_fermeture == null
           && !collection.searchId(etablissement.siret)
