@@ -1,5 +1,8 @@
 class Tools {
 
+    constructor(){
+        this.dictionaryRef=new Dictionary()
+    }
 
     isVisible(element) {
         if (!element) return false;
@@ -237,6 +240,12 @@ class Tools {
                 format = node.getAttribute('data-dateformat')
             }
             output = testDate.toLocaleString(DateTime[format]);
+            return output
+        }
+
+        let dictionary=node.getAttribute('data-dictionary')
+        if(dictionary!=null){
+            output=this.dictionaryRef['get'+dictionary+'Label'](data)
             return output
         }
         return output;
