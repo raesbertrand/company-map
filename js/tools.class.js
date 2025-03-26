@@ -1,7 +1,7 @@
 class Tools {
 
-    constructor(){
-        this.dictionaryRef=new Dictionary()
+    constructor() {
+        this.dictionaryRef = new Dictionary()
     }
 
     isVisible(element) {
@@ -73,7 +73,7 @@ class Tools {
     }
 
     createTree(obj, parent) {
-        let cl=this
+        let cl = this
         const ul = cl.createElement("ul", "json-tree")
         parent.appendChild(ul)
 
@@ -109,7 +109,7 @@ class Tools {
     }
 
     insertVarTemplate(unicId, datas, model, parent, specific) {
-        let cl=this
+        let cl = this
         // unicId must be an array. Index 0 define the key of an object, index 1 define a value. If a node contains this key with a different value, the node is ignore. 
         // The goal is to ignore unrelevant buildings of the company as the user click on a single building but the data list all of them.
         Object.entries(datas).forEach((data) => {
@@ -243,11 +243,38 @@ class Tools {
             return output
         }
 
-        let dictionary=node.getAttribute('data-dictionary')
-        if(dictionary!=null){
-            output=this.dictionaryRef['get'+dictionary+'Label'](data)
+        let dictionary = node.getAttribute('data-dictionary')
+        if (dictionary != null) {
+            output = this.dictionaryRef['get' + dictionary + 'Label'](data)
             return output
         }
+
         return output;
+    }
+
+    nafTypeCodeEndpoint(code) {
+        let output
+        let n2 = /^[0-9]{2}$/gm;
+        let n3 = /^[0-9]{4}$/gm;
+        let fr2class = /^[0-9]{2}\.[0-9]{2}$/gm
+        let fr2subclass = /^[0-9]{2}\.[0-9]{2}[a-zA-Z]$/gm
+        switch (true) {
+            case n2.test(code):
+                output = '/codes/cj/n2/'
+                break
+            case n3.test(code):
+                output = '/codes/cj/n3/'
+                break
+            case fr2class.test(code):
+                output = '/codes/nafr2/classe/'
+                break
+            case fr2subclass.test(code):
+                output = '/codes/nafr2/sousClasse/'
+                break
+            default:
+                output = false
+                break
+        }
+        return output
     }
 }

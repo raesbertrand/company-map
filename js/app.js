@@ -133,7 +133,7 @@ function postNote(formNote, siret) {
 
 function feedMap(companies) {
   companies.forEach((company) => {
-    if (company.date_fermeture == null && company.complements.est_entrepreneur_individuel!=true) {
+    if (company.date_fermeture == null && company.complements.est_entrepreneur_individuel != true) {
       company.matching_etablissements.forEach((etablissement) => {
         if (etablissement.date_fermeture == null
           && !collection.searchId(etablissement.siret)
@@ -210,6 +210,20 @@ function displayCompanyCard(markerDatas) {
   var clone = document.importNode(template.content, true);
   tools.insertVarTemplate(["siret", siret], companyDetails, clone)
   target.appendChild(clone);
+
+  let insee = document.querySelectorAll('[data-insee]')
+  if (insee.length > 0) {
+    insee.forEach(function (v, k) {
+      let type=v.getAttribute('data-insee')
+      if(type=='nomenclature'){
+        let inseeApi = new Api(env.inseeAPI, "nafCode")
+        let codeEndpoint=tools.nafTypeCodeEndpoint(v.textContent)
+        inseeApi.get(codeEndpoint+v.textContent, function(d){
+          v.textContent=d.intitule
+        })
+      }
+    })
+  }
 }
 
 
