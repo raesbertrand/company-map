@@ -133,9 +133,9 @@ function postNote(formNote, siret) {
 
 function feedMap(companies) {
   companies.forEach((company) => {
-    if (company.date_fermeture == null) {
+    if (company.date_fermeture == null && company.complements.est_entrepreneur_individuel!=true) {
       company.matching_etablissements.forEach((etablissement) => {
-        if (etablissement.date_fermeture == null && etablissement.complements.est_entrepreneur_individuel!=true
+        if (etablissement.date_fermeture == null
           && !collection.searchId(etablissement.siret)
         ) {
           let converter = new GeoJsonConverter()
